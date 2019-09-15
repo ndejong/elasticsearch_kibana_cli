@@ -23,12 +23,12 @@ class ElasticsearchKibanaCLISearch:
 
         self.connection = connection
 
-    def msearch(self, index, search, source=None):
+    def msearch(self, index, search, size=50, source=None):
 
         url = '{}/elasticsearch/_msearch'.format(self.connection.client_connect_address)
 
         payload_header = self.__payload_header(index)
-        payload_body = self.__payload_body(search, source)
+        payload_body = self.__payload_body(search, size, source)
 
         request_headers = {
             'content-type': 'application/x-ndjson',
@@ -50,7 +50,7 @@ class ElasticsearchKibanaCLISearch:
             'preference': int(round(time.time() * 1000))
         })
 
-    def __payload_body(self, query_params, source=None):
+    def __payload_body(self, query_params, size=50, source=None):
 
         for param_name in ['must', 'must_not', 'should', 'should_not', 'filter']:
             if param_name in query_params:
@@ -70,7 +70,7 @@ class ElasticsearchKibanaCLISearch:
 
         payload_values = {
             'source': json.dumps(source) if source is not None else '[ ]',
-            'size': int(query_params['size']) if 'size' in query_params else 50,
+            'size': size,
             'aggs': '{ }',
             'timeout': '"' + (str(query_params['timeout']) if 'timeout' in query_params else '30s') + '"',
             'query': json.dumps(query.to_dict())
