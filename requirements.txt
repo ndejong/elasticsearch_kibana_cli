@@ -1,0 +1,9 @@
+
+bs4
+maya
+flask
+pyyaml
+urllib3
+chardet
+requests
+elasticsearch_dsl
