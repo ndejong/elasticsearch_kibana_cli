@@ -10,7 +10,7 @@ class ElasticsearchKibanaCLIConfig:
 
     debug = False
     config = None
-    config_root = 'elasticsearch_kibana_cli'
+    config_root = NAME
     config_filename = None
 
     def __init__(self, config_filename_env_override=None):
@@ -77,7 +77,7 @@ class ElasticsearchKibanaCLIConfig:
                     r[item_k] = replace_env_values(item_v)
                 return r
             else:
-                raise ElasticsearchKibanaCLIException('Unsupported type', input)
+                raise ElasticsearchKibanaCLIException('Unsupported type in replace_env_values()', input)
 
         loaded_config = replace_env_values(loaded_config)
 

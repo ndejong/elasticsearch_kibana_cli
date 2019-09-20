@@ -23,7 +23,7 @@ class ElasticsearchKibanaCLISearch:
 
         self.connection = connection
 
-    def msearch(self, index, search, size=50, source=None):
+    def msearch(self, index, search, size=10, source=None):
 
         url = '{}/elasticsearch/_msearch'.format(self.connection.client_connect_address)
 
@@ -50,7 +50,7 @@ class ElasticsearchKibanaCLISearch:
             'preference': int(round(time.time() * 1000))
         })
 
-    def __payload_body(self, query_params, size=50, source=None):
+    def __payload_body(self, query_params, size=10, source=None):
 
         for param_name in ['must', 'must_not', 'should', 'should_not', 'filter']:
             if param_name in query_params:

@@ -5,6 +5,7 @@ import time
 
 from . import ElasticsearchKibanaCLIException
 
+from . import NAME
 from . import ElasticsearchKibanaCLILogger
 from . import ElasticsearchKibanaCLIConfig
 from . import ElasticsearchKibanaCLIConnection
@@ -19,7 +20,8 @@ class ElasticsearchKibanaCLI:
     def __init__(self, ping_connection=True, kbn_version=None, debug=False):
 
         if debug:
-            os.environ['ELASTICSEARCHKIBANACLI_LOGLEVEL'] = 'debug'
+            loglevel_env_override = '{}_LOGLEVEL'.format(NAME.replace('_', '').replace(' ', '').upper())
+            os.environ[loglevel_env_override] = 'debug'
 
         global logger
         logger = ElasticsearchKibanaCLILogger().logger
@@ -59,14 +61,18 @@ class ElasticsearchKibanaCLI:
 
         self.search = ElasticsearchKibanaCLISearch(connection=self.connection)
 
-    def main(self):
+    def msearch(self, search_definition, size=None):
 
-        definition_name = 'example01'
-        if 'search_definitions' not in config or definition_name not in config['search_definitions']:
-            logger.error('Unable to locate config[search_definitions][{}]'.format(definition_name))
+        if 'search_definitions' not in config or search_definition not in config['search_definitions']:
+            logger.error('Unable to locate config[search_definitions][{}]'.format(search_definition))
             return
 
-        data = self.search.msearch(**config['search_definitions'][definition_name])
+        kwargs = config['search_definitions'][search_definition]
+
+        if size is not None:
+            kwargs['size'] = size
+
+        data = self.search.msearch(**kwargs)
         print(json.dumps(data))
 
-        time.sleep(3)
+        time.sleep(0.2)

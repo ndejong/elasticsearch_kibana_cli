@@ -1,16 +1,55 @@
 #!/usr/bin/env python3
 
+import os
+import argparse
 import elasticsearch_kibana_cli
 
-debug=True
-# ping_connection=False
-# kbn_version='faux-version'
-ping_connection=True
-kbn_version=None
+
+parser = argparse.ArgumentParser(
+    description='Elasticsearch Kibana CLI',
+    add_help=False,
+    epilog='The Elasticsearch Kibana CLI provides a configurable programatic interface to query the Elasticsearch '
+           'backend via the Kibana frontend which is useful in situations where Elasticsearch is not otherwise readily '
+           'accessible.  Configuration options are available that permit HTTP request header overrides which then '
+           'enables access to Kibana in situations that require authentication such as in cases where OAuth reverse '
+           'proxies are in use.',
+)
+
+parser.add_argument('-c', type=str, metavar='<filename>', default=None,
+                    help='Configuration file to use, use this if the eskbcli.yml is not be automatically located.')
+
+parser.add_argument('-s', type=str, metavar='<search>', default=None,
+                    help='The search_definition name from configuration to use and execute')
+
+parser.add_argument('-h', type=int, metavar='<hits>', default=None,
+                    help='Search hit count limit, overrides the config value if set (default:10)')
+
+parser.add_argument('-p', action='store_true', default=False,
+                    help='Ping the Kibana endpoint before using this connection (default: False)')
+
+parser.add_argument('-k', type=str, metavar='<kbn_version>', default=None,
+                    help='Kibana version override, useful in debugging situations')
+
+parser.add_argument('-d', action='store_true', default=False,
+                    help='Debug level logging output (default: False)')
+
+
+args = parser.parse_args()
+if args.s is None:
+    parser.print_help()
+    exit(1)
+
+
+if args.c is not None:
+    config_filename_env_override = '{}_CONFIG_FILENAME'.format(
+        elasticsearch_kibana_cli.NAME.replace('_', '').replace(' ', '').upper()
+    )
+    os.environ[config_filename_env_override] = args.c
+
 
 if __name__ == '__main__':
     elasticsearch_kibana_cli.ElasticsearchKibanaCLI(
-        ping_connection=ping_connection,
-        kbn_version=kbn_version,
-        debug=debug
-    ).main()
+        ping_connection=args.p,
+        kbn_version=args.k,
+        debug=args.d
+    ).msearch(search_definition=args.s, size=args.h)
