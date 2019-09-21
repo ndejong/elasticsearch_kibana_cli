@@ -7,6 +7,38 @@ from . import NAME
 from . import ElasticsearchKibanaCLIException
 
 
+class ColoredLoggingFormatter(logging.Formatter):
+
+    color_line = '\x1b[90m'  # grey
+    color_reset = '\x1b[0m'  # reset
+
+    def __init__(self, **kwargs):
+        if 'fmt' in kwargs:
+            kwargs['fmt'] = '{}{}{}'.format(self.color_line, kwargs['fmt'], self.color_reset)
+        logging.Formatter.__init__(self, **kwargs)
+
+    def format(self, record):
+
+        levelname = record.levelname.upper()
+
+        if levelname == 'CRITICAL':
+            color_code = '\x1b[41m'  # white-on-red
+        elif levelname == 'ERROR':
+            color_code = '\x1b[31m'  # red
+        elif levelname in ('WARNING', 'WARN'):
+            color_code = '\x1b[33m'  # yellow
+        elif levelname == 'INFO':
+            color_code = '\x1b[36m'  # cyan
+        elif levelname == 'DEBUG':
+            color_code = '\x1b[37m'  # white
+        else:
+            color_code = '\x1b[90m'  # grey
+
+        record.levelname = '{}{}{}'.format(color_code, levelname, self.color_line)
+
+        return logging.Formatter.format(self, record)
+
+
 class ElasticsearchKibanaCLILogger:
 
     logger = None
@@ -49,12 +81,9 @@ class ElasticsearchKibanaCLILogger:
         else:
             stream_handler.setLevel(logging.NOTSET)
 
-        color_start = '\x1b[90m'  # grey
-        color_end = '\x1b[0m'
-
-        formatter = logging.Formatter(
-            '{}%(asctime)s - %(levelname)s - %(message)s{}'.format(color_start, color_end),
-            '%Y%m%dZ%H%M%S'
+        formatter = ColoredLoggingFormatter(
+            fmt='%(asctime)s - %(levelname)s - %(message)s',
+            datefmt='%Y%m%dZ%H%M%S'
         )
         logging.Formatter.converter = time.gmtime
 
