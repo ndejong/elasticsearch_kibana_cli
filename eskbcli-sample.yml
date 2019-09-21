@@ -26,19 +26,26 @@ elasticsearch_kibana_cli:
       splits: 5
 
       source:
+        - "path"
         - "remote_ip"
-        - "request"
         - "geoip.asn"
+        - "geoip.country_name"
 
       search:
+
         must:
           range:
             @timestamp:
               'lte': 'now'
-              'gte': '-10m'
+              'gte': '-7d'
+          match:
+            - hostname: "awesome.internal"
+            - path: "login"
+
         must_not:
           match:
             - geoip.country_name: "Australia"
-        filter:
-          term:
-            - hostname: "awesome.internal"
+
+#        filter:
+#          term:
+#            - hostname: "awesome.internal"
