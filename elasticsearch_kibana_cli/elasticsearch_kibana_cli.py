@@ -31,7 +31,7 @@ class ElasticsearchKibanaCLI:
             es_config = ElasticsearchKibanaCLIConfig()
         except ElasticsearchKibanaCLIException as e:
             logger.fatal(str(e).replace('\n', ' '))
-            exit()
+            exit(1)
 
         config = es_config.config
         config_filename = es_config.config_filename
@@ -53,11 +53,19 @@ class ElasticsearchKibanaCLI:
         logger.debug('Connection setup {}'.format(self.connection.client_connect_address))
 
         if ping_connection is True:
-            if not self.connection.ping():
-                raise ElasticsearchKibanaCLIException('Unable to ping Kibana endpoint via {}'.
-                                                      format(self.connection.client_connect_address))
-            else:
+
+            ping_status = False
+            try:
+                ping_status = self.connection.ping()
+            except Exception as e:
+                logger.fatal(str(e).replace('\n', ' '))
+                exit(1)
+
+            if ping_status:
                 logger.debug('Ping okay {}'.format(self.connection.client_connect_address))
+            else:
+                logger.fatal('Unable to ping Kibana endpoint via {}'.format(self.connection.client_connect_address))
+                exit(1)
 
         self.search = ElasticsearchKibanaCLISearch(connection=self.connection)
 
@@ -72,7 +80,11 @@ class ElasticsearchKibanaCLI:
         if size is not None:
             kwargs['size'] = size
 
-        data = self.search.msearch(**kwargs)
-        print(json.dumps(data))
+        try:
+            data = self.search.msearch(**kwargs)
+        except Exception as e:
+            logger.fatal(str(e).replace('\n', ' '))
+            exit(1)
 
+        print(json.dumps(data))
         time.sleep(0.2)

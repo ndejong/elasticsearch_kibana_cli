@@ -35,7 +35,7 @@ parser.add_argument('-d', action='store_true', default=False,
 
 
 args = parser.parse_args()
-if args.s is None or (args.h is not None and args.h > 10000 or args.h < 1):
+if args.s is None or (args.h is not None and (args.h > 10000 or args.h < 1)):
     parser.print_help()
     exit(1)
 

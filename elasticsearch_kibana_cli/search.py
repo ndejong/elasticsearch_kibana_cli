@@ -63,6 +63,9 @@ class ElasticsearchKibanaCLISearch:
 
     def __payload_body(self, query_params, size=10000, source=None):
 
+        if size > 10000 or size < 1:
+            raise ElasticsearchKibanaCLIException('Payload size is out-of-bounds in __parse_query_param()', size)
+
         for param_name in ['must', 'must_not', 'should', 'should_not', 'filter']:
             if param_name in query_params:
                 query_params[param_name] = self.__parse_query_param(query_params[param_name])
