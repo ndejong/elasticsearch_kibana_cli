@@ -8,11 +8,13 @@ import elasticsearch_kibana_cli
 parser = argparse.ArgumentParser(
     description='Elasticsearch Kibana CLI',
     add_help=False,
-    epilog='The Elasticsearch Kibana CLI provides a configurable programatic interface to query the Elasticsearch '
-           'backend via the Kibana frontend which is useful in situations where Elasticsearch is not otherwise readily '
-           'accessible.  Configuration options are available that permit HTTP request header overrides which then '
-           'enables access to Kibana in situations that require authentication such as in cases where OAuth reverse '
-           'proxies are in use.',
+    epilog="""
+        The Elasticsearch Kibana CLI provides a configurable programatic interface to query the Elasticsearch backend 
+        via the Kibana frontend which is useful in situations where the Elasticsearch backend is not otherwise 
+        accessible.  Configuration options are available that permit HTTP request header overrides that hence enable 
+        access to Kibana in situations that require additional authentication such as when Kibana is behind an OAuth 
+        reverse proxy.
+    """,
 )
 
 parser.add_argument('-c', type=str, metavar='<filename>', default=None,
