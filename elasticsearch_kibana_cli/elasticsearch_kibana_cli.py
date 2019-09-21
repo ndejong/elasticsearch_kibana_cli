@@ -6,6 +6,7 @@ import time
 from . import ElasticsearchKibanaCLIException
 
 from . import NAME
+from . import VERSION
 from . import ElasticsearchKibanaCLILogger
 from . import ElasticsearchKibanaCLIConfig
 from . import ElasticsearchKibanaCLIConnection
@@ -26,6 +27,7 @@ class ElasticsearchKibanaCLI:
         global logger
         logger = ElasticsearchKibanaCLILogger().logger
         logger.info(NAME)
+        logger.debug('version {}'.format(VERSION))
 
         global config, config_filename
         try:
@@ -90,7 +92,7 @@ class ElasticsearchKibanaCLI:
             exit(1)
 
         print(json.dumps(data, indent='  '))
-        time.sleep(0.1)  # allows internal_proxy threads to come back
+        time.sleep(0.1)  # allows internal_proxy threads to close-out
         return
 
     def search_definitions(self):

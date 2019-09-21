@@ -6,7 +6,7 @@ import elasticsearch_kibana_cli
 
 
 parser = argparse.ArgumentParser(
-    description='Elasticsearch Kibana CLI',
+    description='Elasticsearch Kibana CLI v{}'.format(elasticsearch_kibana_cli.VERSION),
     add_help=False,
     epilog="""
         The Elasticsearch Kibana CLI provides a configurable programatic interface to query the Elasticsearch backend 
