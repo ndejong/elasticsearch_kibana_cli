@@ -1,0 +1,44 @@
+
+---
+
+elasticsearch_kibana_cli:
+
+  base_uri: https://kibana.internal
+
+#  internal_proxy:
+#    debug: false
+#    listen:
+#      proto: http
+#      address: 127.0.0.1
+#      port: 59200
+#    header_overrides:
+#      cookie: env:GCP_IAP_COOKIE
+
+  search_definitions:
+
+    # ===
+    example01:
+
+      index: nginx-access-*
+
+      # size: 1000
+
+      splits: 5
+
+      source:
+        - "remote_ip"
+        - "request"
+        - "geoip.asn"
+
+      search:
+        must:
+          range:
+            @timestamp:
+              'lte': 'now'
+              'gte': '-10m'
+        must_not:
+          match:
+            - geoip.country_name: "Australia"
+        filter:
+          term:
+            - hostname: "awesome.internal"
