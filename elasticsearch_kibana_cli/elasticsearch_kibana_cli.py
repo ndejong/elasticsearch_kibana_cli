@@ -35,7 +35,7 @@ class ElasticsearchKibanaCLI:
 
         config = es_config.config
         config_filename = es_config.config_filename
-        logger.debug('Using config filename {}'.format(config_filename))
+        logger.info('Using config filename {}'.format(config_filename))
 
         base_uri = 'http://127.0.0.1:9200'
         if 'base_uri' in config.keys():
@@ -44,13 +44,13 @@ class ElasticsearchKibanaCLI:
         proxy_config = None
         if 'internal_proxy' in config.keys():
             proxy_config = config['internal_proxy']
-            logger.debug('Using internal_proxy to connect {}'.format(base_uri))
+            logger.info('Using internal_proxy to connect {}'.format(base_uri))
         else:
-            logger.debug('Using direct connection {}'.format(base_uri))
+            logger.info('Using direct connection {}'.format(base_uri))
 
         self.connection = ElasticsearchKibanaCLIConnection(proxy_config=proxy_config)
         self.connection.attach(base_uri=base_uri, kbn_version=kbn_version)
-        logger.debug('Connection setup {}'.format(self.connection.client_connect_address))
+        logger.info('Connection setup {}'.format(self.connection.client_connect_address))
 
         if ping_connection is True:
 
@@ -62,17 +62,19 @@ class ElasticsearchKibanaCLI:
                 exit(1)
 
             if ping_status:
-                logger.debug('Ping okay {}'.format(self.connection.client_connect_address))
+                logger.info('Ping okay {}'.format(self.connection.client_connect_address))
             else:
                 logger.fatal('Unable to ping Kibana endpoint via {}'.format(self.connection.client_connect_address))
                 exit(1)
+        else:
+            logger.info('Skipping ping endpoint check via {}'.format(self.connection.client_connect_address))
 
         self.search = ElasticsearchKibanaCLISearch(connection=self.connection)
 
     def msearch(self, search_definition, size=None):
 
         if 'search_definitions' not in config or search_definition not in config['search_definitions']:
-            logger.error('Unable to locate config[search_definitions][{}]'.format(search_definition))
+            logger.error('Unable to locate "{}" in config under "search_definitions"'.format(search_definition))
             return
 
         kwargs = config['search_definitions'][search_definition]
@@ -82,7 +84,7 @@ class ElasticsearchKibanaCLI:
 
         try:
             data = self.search.msearch(**kwargs)
-        except Exception as e:
+        except ElasticsearchKibanaCLIException as e:
             logger.fatal(str(e).replace('\n', ' '))
             exit(1)
 

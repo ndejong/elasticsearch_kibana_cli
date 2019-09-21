@@ -26,7 +26,7 @@ class ElasticsearchKibanaCLISearch:
 
         self.connection = connection
 
-    def msearch(self, index, search, size=10000, source=None, splits=1):
+    def msearch(self, index, search, size=10000, source=None, splits=1, range_keyword='range'):
 
         url = '{}/elasticsearch/_msearch'.format(self.connection.client_connect_address)
 
@@ -39,7 +39,8 @@ class ElasticsearchKibanaCLISearch:
             )
 
         if splits > 1:
-            payload_data = self.__payload_range_splitter(payload_data, range_keyword='range')
+            payload_data = self.__payload_range_splitter(payload_data, range_keyword=range_keyword)
+            logger.info('Search split into {} requests based on "{}" keyword'.format(str(splits), range_keyword))
 
         request_headers = {
             'content-type': 'application/x-ndjson',
@@ -52,7 +53,28 @@ class ElasticsearchKibanaCLISearch:
             data=payload_data,
             headers=request_headers
         )
-        return r.json()
+
+        response_data = r.json()
+        return_list = []
+
+        hit_total = 0
+        for hit_index in range(0, splits):
+            value = None
+            try:
+                value = response_data['responses'][hit_index]['hits']['total']  # responses/0/hits/total
+                return_list.extend(response_data['responses'][hit_index]['hits']['hits'])
+            except KeyError: pass
+            except IndexError: pass
+            if value is not None and value > 10000:
+                logger.warning('Search split {} has {} hit-results which exceeds the 10000 limit, '
+                               'results truncated!'.format(hit_index, value))
+            hit_total = hit_total + value
+
+        hit_count = len(return_list)
+        logger.info('{} available-hits; {} returned-hits; {} average-hits-per-split; {} msearch-splits'.
+                    format(hit_total, hit_count, int(hit_total/splits), splits))
+
+        return return_list
 
     def __payload_header(self, index):
         return json.dumps({
