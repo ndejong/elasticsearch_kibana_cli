@@ -30,12 +30,15 @@ parser.add_argument('-p', action='store_true', default=False,
 parser.add_argument('-k', type=str, metavar='<kbn_version>', default=None,
                     help='Kibana version override, useful in various debugging situations')
 
+parser.add_argument('-D', action='store_true', default=False,
+                    help='List the configured search_definitions in config and immediately exit')
+
 parser.add_argument('-d', action='store_true', default=False,
                     help='Debug level logging output (default: False)')
 
 
 args = parser.parse_args()
-if args.s is None or (args.h is not None and (args.h > 10000 or args.h < 1)):
+if (args.s is None and args.D is False) or (args.h is not None and (args.h > 10000 or args.h < 1)):
     parser.print_help()
     exit(1)
 
@@ -48,8 +51,16 @@ if args.c is not None:
 
 
 if __name__ == '__main__':
-    elasticsearch_kibana_cli.ElasticsearchKibanaCLI(
-        ping_connection=args.p,
-        kbn_version=args.k,
-        debug=args.d
-    ).msearch(search_definition=args.s, size=args.h)
+
+    if args.D is True:
+        elasticsearch_kibana_cli.ElasticsearchKibanaCLI(
+            ping_connection=False,
+            kbn_version='_',
+            debug=args.d
+        ).search_definitions()
+    else:
+        elasticsearch_kibana_cli.ElasticsearchKibanaCLI(
+            ping_connection=args.p,
+            kbn_version=args.k,
+            debug=args.d
+        ).msearch(search_definition=args.s, size=args.h)

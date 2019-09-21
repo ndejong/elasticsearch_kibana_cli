@@ -25,6 +25,7 @@ class ElasticsearchKibanaCLI:
 
         global logger
         logger = ElasticsearchKibanaCLILogger().logger
+        logger.info(NAME)
 
         global config, config_filename
         try:
@@ -44,13 +45,13 @@ class ElasticsearchKibanaCLI:
         proxy_config = None
         if 'internal_proxy' in config.keys():
             proxy_config = config['internal_proxy']
-            logger.info('Using internal_proxy to connect {}'.format(base_uri))
+            logger.debug('Using internal_proxy to connect {}'.format(base_uri))
         else:
-            logger.info('Using direct connection {}'.format(base_uri))
+            logger.debug('Using direct connection {}'.format(base_uri))
 
         self.connection = ElasticsearchKibanaCLIConnection(proxy_config=proxy_config)
         self.connection.attach(base_uri=base_uri, kbn_version=kbn_version)
-        logger.info('Connection setup {}'.format(self.connection.client_connect_address))
+        logger.debug('Connection definition setup {}'.format(self.connection.client_connect_address))
 
         if ping_connection is True:
 
@@ -67,7 +68,7 @@ class ElasticsearchKibanaCLI:
                 logger.fatal('Unable to ping Kibana endpoint via {}'.format(self.connection.client_connect_address))
                 exit(1)
         else:
-            logger.info('Skipping ping endpoint check via {}'.format(self.connection.client_connect_address))
+            logger.debug('Skipping ping endpoint check via {}'.format(self.connection.client_connect_address))
 
         self.search = ElasticsearchKibanaCLISearch(connection=self.connection)
 
@@ -88,5 +89,14 @@ class ElasticsearchKibanaCLI:
             logger.fatal(str(e).replace('\n', ' '))
             exit(1)
 
-        print(json.dumps(data))
-        time.sleep(0.2)
+        print(json.dumps(data, indent='  '))
+        time.sleep(0.1)  # allows internal_proxy threads to come back
+        return
+
+    def search_definitions(self):
+        definition_keys = []
+        if 'search_definitions' in config:
+            for definition_key in config['search_definitions'].keys():
+                definition_keys.append(definition_key)
+        print(json.dumps(definition_keys, indent='  '))
+        return
