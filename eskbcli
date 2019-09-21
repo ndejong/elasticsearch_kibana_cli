@@ -22,20 +22,20 @@ parser.add_argument('-s', type=str, metavar='<search>', default=None,
                     help='The search_definition name from configuration to use and execute')
 
 parser.add_argument('-h', type=int, metavar='<hits>', default=None,
-                    help='Search hit count limit, overrides the config value if set (default:10)')
+                    help='Search hit count limit, overrides the config value if set min=1, max=10000 (default:10000)')
 
 parser.add_argument('-p', action='store_true', default=False,
                     help='Ping the Kibana endpoint before using this connection (default: False)')
 
 parser.add_argument('-k', type=str, metavar='<kbn_version>', default=None,
-                    help='Kibana version override, useful in debugging situations')
+                    help='Kibana version override, useful in various debugging situations')
 
 parser.add_argument('-d', action='store_true', default=False,
                     help='Debug level logging output (default: False)')
 
 
 args = parser.parse_args()
-if args.s is None:
+if args.s is None or (args.h is not None and args.h > 10000 or args.h < 1):
     parser.print_help()
     exit(1)
 

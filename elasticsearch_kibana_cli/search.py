@@ -2,7 +2,10 @@
 import json
 import time
 import maya
+import copy
 import requests
+import dpath.util
+from collections import OrderedDict
 from elasticsearch_dsl import Q, A
 
 from . import NAME
@@ -23,12 +26,20 @@ class ElasticsearchKibanaCLISearch:
 
         self.connection = connection
 
-    def msearch(self, index, search, size=10, source=None):
+    def msearch(self, index, search, size=10000, source=None, splits=1):
 
         url = '{}/elasticsearch/_msearch'.format(self.connection.client_connect_address)
 
-        payload_header = self.__payload_header(index)
-        payload_body = self.__payload_body(search, size, source)
+        payload_data = ''
+        for split_index in range(0, splits):
+            payload_data = '{}{}\n{}\n'.format(
+                payload_data,
+                self.__payload_header(copy.copy(index)),
+                self.__payload_body(copy.copy(search), copy.copy(size), copy.copy(source))
+            )
+
+        if splits > 1:
+            payload_data = self.__payload_range_splitter(payload_data, range_keyword='range')
 
         request_headers = {
             'content-type': 'application/x-ndjson',
@@ -38,7 +49,7 @@ class ElasticsearchKibanaCLISearch:
 
         r = requests.post(
             url,
-            data='{}\n{}\n'.format(payload_header, payload_body),
+            data=payload_data,
             headers=request_headers
         )
         return r.json()
@@ -50,7 +61,7 @@ class ElasticsearchKibanaCLISearch:
             'preference': int(round(time.time() * 1000))
         })
 
-    def __payload_body(self, query_params, size=10, source=None):
+    def __payload_body(self, query_params, size=10000, source=None):
 
         for param_name in ['must', 'must_not', 'should', 'should_not', 'filter']:
             if param_name in query_params:
@@ -110,11 +121,11 @@ class ElasticsearchKibanaCLISearch:
                     for param_query_item_k, param_query_item_v in param_query_item.items():
                         query.append(Q(param_query_type, **{param_query_item_k:param_query_item_v}))
                 else:
-                    raise ElasticsearchKibanaCLIException('Unsupported type', param_query_item)
+                    raise ElasticsearchKibanaCLIException('Unsupported type in __parse_query_param()', param_query_item)
         return query
 
     def __parse_query_timestamp(self, element):
-        if type(element) in [int, str, bool]:
+        if type(element) in [int, str, bool] or element is None:
             return element
         elif type(element) is list:
             r = []
@@ -131,4 +142,117 @@ class ElasticsearchKibanaCLISearch:
             r['format'] = 'epoch_millis'
             return r
         else:
-            raise ElasticsearchKibanaCLIException('Unsupported type', element)
+            raise ElasticsearchKibanaCLIException('Unsupported type in __parse_query_timestamp()', element)
+
+    def __payload_range_splitter(self, ndjson_payload, range_keyword='range'):
+
+        return_payloads = OrderedDict()
+        for index, json_payload in enumerate(ndjson_payload.split('\n')):
+            if len(json_payload) > 0:
+                return_payloads[str(index)] = json.loads(json_payload)
+
+        payload_ranges = OrderedDict()
+        for payload_k, payload_v in return_payloads.items():
+            for payload_tupple in dpath.util.search(payload_v, '**/{}'.format(range_keyword), yielded=True):
+                payload_ranges[payload_k] = payload_tupple
+
+        # check the range paths are the same
+        payload_range_path = None
+        payload_range_path_key = None
+        for payload_range_k, payload_range_value in payload_ranges.items():
+            if payload_range_path is None:
+                payload_range_path, payload_range_path_value = payload_range_value
+                payload_range_path_key = next(iter(payload_range_path_value.keys()))
+            else:
+                payload_range_path_next, payload_range_path_next_value = payload_range_value
+                payload_range_path_next_key = next(iter(payload_range_path_next_value.keys()))
+                if payload_range_path_next != payload_range_path:
+                    raise ElasticsearchKibanaCLIException('Ranges with different paths in __payload_range_splitter()')
+                if payload_range_path_next_key != payload_range_path_key:
+                    raise ElasticsearchKibanaCLIException('Ranges with different internal keys in __payload_range_splitter()')
+
+        # determine the min max values within the discovered range definitions
+        min = max = None
+        limit_keys = []
+        for range_key in payload_ranges.keys():
+            range_values = dpath.util.get(
+                return_payloads,
+                '{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key)
+            )
+            for range_value_key, range_value_value in range_values.items():
+                if range_value_key.lower() in ['gt','gte','lt','lte']:
+                    if min is None:
+                        min = range_value_value
+                    elif range_value_value < min:
+                        min = range_value_value
+                    if max is None:
+                        max = range_value_value
+                    elif range_value_value > max:
+                        max = range_value_value
+                    if range_value_key not in limit_keys:
+                        limit_keys.append(range_value_key)
+
+        def split_min_max_delta(min_max_delta, num_of_parts):
+            part_duration = int(min_max_delta / num_of_parts)
+            parts = []
+            marker = 0
+            for _ in range(num_of_parts):
+                part = [marker, marker + part_duration]
+                marker += part_duration
+                parts.append(part)
+            parts[len(parts)-1][1] = min_max_delta  # rewrite final value so it correctly lines up
+            return parts
+
+        splits = split_min_max_delta(int(max-min), len(payload_ranges.keys()))
+
+        splits_index = 0
+        for range_key in payload_ranges.keys():
+            for limit_key in limit_keys:
+
+                if splits_index == 0 and 'gt' in limit_key.lower():
+                    dpath.util.set(
+                        return_payloads,
+                        '{}/{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key, limit_key),
+                        (min + splits[splits_index][0])
+                    )
+
+                elif 'gt' in limit_key.lower():
+                    dpath.util.delete(
+                        return_payloads,
+                        '{}/{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key, limit_key)
+                    )
+                    dpath.util.new(
+                        return_payloads,
+                        '{}/{}/{}/gte'.format(range_key, payload_range_path, payload_range_path_key),
+                        (min + splits[splits_index][0])
+                    )
+
+                elif splits_index == len(splits)-1 and 'lt' in limit_key.lower():
+                    dpath.util.set(
+                        return_payloads,
+                        '{}/{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key, limit_key),
+                        (min + splits[splits_index][1])
+                    )
+
+                elif 'lt' in limit_key.lower():
+                    dpath.util.delete(
+                        return_payloads,
+                        '{}/{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key, limit_key)
+                    )
+                    dpath.util.new(
+                        return_payloads,
+                        '{}/{}/{}/lt'.format(range_key, payload_range_path, payload_range_path_key),
+                        (min + splits[splits_index][1])
+                    )
+
+                else:
+                    raise ElasticsearchKibanaCLIException('Unsupported limit key in __payload_range_splitter()', limit_key)
+
+            splits_index += 1
+
+        # re-cast back into ndjson_payload format
+        ndjson_return_payload = ''
+        for return_payloads_k, return_payloads_v in return_payloads.items():
+            ndjson_return_payload = '{}{}\n'.format(ndjson_return_payload, json.dumps(return_payloads_v))
+
+        return ndjson_return_payload
