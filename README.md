@@ -1,6 +1,6 @@
 # Elasticsearch Kibana CLI
 
-The Elasticsearch Kibana CLI provides a configurable programatic interface to
+The Elasticsearch Kibana CLI provides a configurable programmatic interface to
 query the Elasticsearch backend via the Kibana frontend which is useful in
 situations where the Elasticsearch backend is not otherwise accessible.
 Configuration options are available that permit HTTP request header overrides
@@ -94,7 +94,7 @@ optional arguments:
                      eskbcli.yml in common paths.
   -d, --debug        Debug level logging output (default: False).
 
-The Elasticsearch Kibana CLI provides a configurable programatic interface to
+The Elasticsearch Kibana CLI provides a configurable programmatic interface to
 query the Elasticsearch backend via the Kibana frontend which is useful in
 situations where the Elasticsearch backend is not otherwise accessible.
 Configuration options are available that permit HTTP request header overrides
