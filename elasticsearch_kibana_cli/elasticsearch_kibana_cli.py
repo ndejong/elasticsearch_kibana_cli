@@ -17,8 +17,9 @@ class ElasticsearchKibanaCLI:
 
     search = None
     connection = None
+    output_filename = None
 
-    def __init__(self, ping_connection=True, kbn_version=None, debug=False):
+    def __init__(self, output_filename=None, debug=False):
 
         if debug:
             loglevel_env_override = '{}_LOGLEVEL'.format(NAME.replace('_', '').replace(' ', '').upper())
@@ -27,7 +28,7 @@ class ElasticsearchKibanaCLI:
         global logger
         logger = ElasticsearchKibanaCLILogger().logger
         logger.info(NAME)
-        logger.debug('version {}'.format(VERSION))
+        logger.info('version {}'.format(VERSION))
 
         global config, config_filename
         try:
@@ -38,7 +39,11 @@ class ElasticsearchKibanaCLI:
 
         config = es_config.config
         config_filename = es_config.config_filename
-        logger.info('Using config filename {}'.format(config_filename))
+        logger.info('Loaded configuration filename {}'.format(config_filename))
+
+        self.output_filename = output_filename
+
+    def connect_search(self, ping_connection=True, kbn_version=None):
 
         base_uri = 'http://127.0.0.1:9200'
         if 'base_uri' in config.keys():
@@ -56,7 +61,6 @@ class ElasticsearchKibanaCLI:
         logger.debug('Connection definition setup {}'.format(self.connection.client_connect_address))
 
         if ping_connection is True:
-
             ping_status = False
             try:
                 ping_status = self.connection.ping()
@@ -74,7 +78,9 @@ class ElasticsearchKibanaCLI:
 
         self.search = ElasticsearchKibanaCLISearch(connection=self.connection)
 
-    def msearch(self, search_definition, size=None):
+    def msearch(self, search_definition, hit_count=None, split_count=None, ping_connection=True, kbn_version=None):
+
+        self.connect_search(ping_connection=ping_connection, kbn_version=kbn_version)
 
         if 'search_definitions' not in config or search_definition not in config['search_definitions']:
             logger.error('Unable to locate "{}" in config under "search_definitions"'.format(search_definition))
@@ -82,8 +88,11 @@ class ElasticsearchKibanaCLI:
 
         kwargs = config['search_definitions'][search_definition]
 
-        if size is not None:
-            kwargs['size'] = size
+        if hit_count is not None:
+            kwargs['size'] = hit_count
+
+        if split_count is not None:
+            kwargs['splits'] = split_count
 
         try:
             data = self.search.msearch(**kwargs)
@@ -91,14 +100,22 @@ class ElasticsearchKibanaCLI:
             logger.fatal(str(e).replace('\n', ' '))
             exit(1)
 
-        print(json.dumps(data, indent='  '))
+        self.__output(data)
         time.sleep(0.1)  # allows internal_proxy threads to close-out
         return
 
     def search_definitions(self):
-        definition_keys = []
+        data = []
         if 'search_definitions' in config:
             for definition_key in config['search_definitions'].keys():
-                definition_keys.append(definition_key)
-        print(json.dumps(definition_keys, indent='  '))
+                data.append(definition_key)
+        self.__output(data)
+        return
+
+    def __output(self, data):
+        if self.output_filename is None or self.output_filename == '-':
+            print(json.dumps(data, indent='  '))
+        else:
+            with open(self.output_filename, 'w') as f:
+                json.dump(data, f, separators=(',', ':'))
         return
