@@ -19,7 +19,7 @@ class ElasticsearchKibanaCLIConfig:
             config_filename_env_override = '{}_CONFIG_FILENAME'.format(NAME.replace('_', '').replace(' ', '').upper())
 
         if os.getenv(config_filename_env_override) is not None:
-            self.config_filename = os.getenv(config_filename_env_override)
+            self.config_filename = os.path.expanduser(os.getenv(config_filename_env_override))
 
         if self.config_filename is None:
             self.config_filename = self.__find_config()
