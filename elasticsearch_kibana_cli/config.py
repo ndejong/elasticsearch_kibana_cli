@@ -55,7 +55,11 @@ class ElasticsearchKibanaCLIConfig:
                 raise ElasticsearchKibanaCLIException(e)
 
         def replace_env_values(input):
-            if type(input) is str:
+            if input is None:
+                return input
+            elif type(input) in (int, bool):
+                return input
+            elif type(input) is str:
                 if input.lower()[0:4] == 'env:':
                     env_name = input.replace('env:', '')
                     self.__debug('Config element set via env value {}'.format(env_name))
@@ -63,8 +67,6 @@ class ElasticsearchKibanaCLIConfig:
                     if value is None or len(value) < 1:
                         raise ElasticsearchKibanaCLIException('Config requested env value not set', env_name)
                     return value
-                return input
-            elif type(input) in (int, bool):
                 return input
             elif type(input) is list:
                 r = []
