@@ -47,7 +47,7 @@ class ElasticsearchKibanaCLILogger:
     def __init__(self, level=None, level_env_override=None):
 
         if level_env_override is None:
-            level_env_override = '{}_LOGLEVEL'.format(NAME.upper())
+            level_env_override = '{}_LOGLEVEL'.format(NAME.replace('_', '').replace(' ', '').upper())
 
         if os.getenv(level_env_override) is not None:
             log_level = os.getenv(level_env_override)

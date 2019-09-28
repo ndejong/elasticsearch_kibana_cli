@@ -22,7 +22,7 @@ class ElasticsearchKibanaCLI:
     def __init__(self, output_filename=None, debug=False):
 
         if debug:
-            loglevel_env_override = '{}_LOGLEVEL'.format(NAME.upper())
+            loglevel_env_override = '{}_LOGLEVEL'.format(NAME.replace('_', '').replace(' ', '').upper())
             os.environ[loglevel_env_override] = 'debug'
 
         global logger

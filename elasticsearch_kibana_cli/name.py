@@ -1,2 +1,2 @@
 
-NAME='ElasticsearchKibanaCli'
+NAME='elasticsearch_kibana_cli'

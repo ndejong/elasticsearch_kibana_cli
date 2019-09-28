@@ -16,7 +16,7 @@ class ElasticsearchKibanaCLIConfig:
     def __init__(self, config_filename_env_override=None):
 
         if config_filename_env_override is None:
-            config_filename_env_override = '{}_CONFIG_FILENAME'.format(NAME.upper())
+            config_filename_env_override = '{}_CONFIG_FILENAME'.format(NAME.replace('_', '').replace(' ', '').upper())
 
         if os.getenv(config_filename_env_override) is not None:
             self.config_filename = os.path.expanduser(os.getenv(config_filename_env_override))

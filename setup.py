@@ -8,7 +8,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(
-    name=NAME,
+    name='elasticsearch-kibana-cli',
     version=VERSION,
     description='CLI interface to query Elasticsearch backend via the Kibana frontend.',
 

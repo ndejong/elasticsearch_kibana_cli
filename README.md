@@ -1,6 +1,6 @@
 # Elasticsearch Kibana CLI
 
-[![PyPi](https://img.shields.io/pypi/v/ElasticsearchKibanaCli.svg)](https://pypi.org/project/ElasticsearchKibanaCli/)
+[![PyPi](https://img.shields.io/pypi/v/elasticsearch-kibana-cli.svg)](https://pypi.org/project/elasticsearch-kibana-cli/)
 [![Build Status](https://api.travis-ci.org/ndejong/elasticsearch_kibana_cli.svg?branch=master)](https://api.travis-ci.org/ndejong/elasticsearch_kibana_cli)
 
 The Elasticsearch Kibana CLI provides a configurable shell interface to
@@ -17,7 +17,7 @@ proxy.
 ## Install
 #### via PyPi
 ```bash
-pip3 install ElasticsearchKibanaCli
+pip3 install elasticsearch-kibana-cli
 ```
 
 #### via Source

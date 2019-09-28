@@ -32,7 +32,7 @@ def __faux_config_file(filename=None):
         filename = tempfile.mktemp()
 
     faux_config = """
-ElasticsearchKibanaCli:
+elasticsearch_kibana_cli:
   base_uri: http://127.0.0.1
   search_definitions:
     test01:

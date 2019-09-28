@@ -52,7 +52,9 @@ if args.s is None and args.defn is False:
 
 
 if args.c is not None:
-    config_filename_env_override = '{}_CONFIG_FILENAME'.format(elasticsearch_kibana_cli.NAME.upper())
+    config_filename_env_override = '{}_CONFIG_FILENAME'.format(
+        elasticsearch_kibana_cli.NAME.replace('_', '').replace(' ', '').upper()
+    )
     os.environ[config_filename_env_override] = args.c
 
 
