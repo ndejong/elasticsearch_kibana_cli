@@ -10,7 +10,7 @@ with open('README.md', 'r') as f:
 setup(
     name=NAME,
     version=VERSION,
-    description='Provides a programmatic interface to query the Elasticsearch backend via the Kibana frontend.',
+    description='CLI interface to query Elasticsearch backend via the Kibana frontend.',
 
     long_description=long_description,
     long_description_content_type='text/markdown',

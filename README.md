@@ -1,6 +1,9 @@
 # Elasticsearch Kibana CLI
 
-The Elasticsearch Kibana CLI provides a configurable programmatic interface to
+[![PyPi](https://img.shields.io/pypi/v/elasticsearch-kibana-cli.svg)](https://pypi.org/project/elasticsearch-kibana-cli/)
+[![Build Status](https://api.travis-ci.org/ndejong/elasticsearch_kibana_cli.svg?branch=master)](https://api.travis-ci.org/ndejong/elasticsearch_kibana_cli)
+
+The Elasticsearch Kibana CLI provides a configurable shell interface to
 query the Elasticsearch backend via the Kibana frontend which is useful in
 situations where the Elasticsearch backend is not otherwise accessible.
 Configuration options are available that permit HTTP request header overrides
@@ -12,6 +15,10 @@ proxy.
 * [github.com/ndejong/elasticsearch_kibana_cli](https://github.com/ndejong/elasticsearch_kibana_cli)
 
 ## Install
+#### via PyPi
+```bash
+pip3 install elasticsearch-kibana-cli
+```
 
 #### via Source
 ```bash
@@ -94,7 +101,7 @@ optional arguments:
                      eskbcli.yml in common paths.
   -d, --debug        Debug level logging output (default: False).
 
-The Elasticsearch Kibana CLI provides a configurable programmatic interface to
+The Elasticsearch Kibana CLI provides a configurable shell interface to
 query the Elasticsearch backend via the Kibana frontend which is useful in
 situations where the Elasticsearch backend is not otherwise accessible.
 Configuration options are available that permit HTTP request header overrides
