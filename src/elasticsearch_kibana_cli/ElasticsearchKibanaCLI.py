@@ -3,14 +3,14 @@ import os
 import json
 import time
 
-from . import ElasticsearchKibanaCLIException
+from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
 
-from . import NAME
-from . import VERSION
-from . import ElasticsearchKibanaCLILogger
-from . import ElasticsearchKibanaCLIConfig
-from . import ElasticsearchKibanaCLIConnection
-from . import ElasticsearchKibanaCLISearch
+from elasticsearch_kibana_cli import __title__ as NAME
+from elasticsearch_kibana_cli import __version__ as VERSION
+from elasticsearch_kibana_cli.utils.logger import ElasticsearchKibanaCLILogger
+from elasticsearch_kibana_cli.utils.config import ElasticsearchKibanaCLIConfig
+from elasticsearch_kibana_cli.utils.connection import ElasticsearchKibanaCLIConnection
+from elasticsearch_kibana_cli.utils.search import ElasticsearchKibanaCLISearch
 
 
 class ElasticsearchKibanaCLI:

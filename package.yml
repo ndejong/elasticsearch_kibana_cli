@@ -1,0 +1,39 @@
+
+name: elasticsearch_kibana_cli
+version: 0.2.0
+license: BSD2
+author: Nicholas de Jong <me@nicholasdejong.com>
+description: "CLI interface to query Elasticsearch backend via the Kibana frontend."
+url: https://github.com/ndejong/elasticsearch_kibana_cli
+
+typed: false
+
+entrypoints:
+  console_scripts:
+    - eskbcli = elasticsearch_kibana_cli.cli.entrypoints:eskbcli
+
+test-driver:
+  type: pytest
+
+requirements:
+  - python ^3.5
+  - bs4
+  - maya
+  - dpath
+  - Flask
+  - PyYAML
+  - urllib3
+  - chardet
+  - requests
+  - elasticsearch-dsl
+
+classifiers:
+  - "Intended Audience :: System Administrators"
+  - "Intended Audience :: Information Technology"
+  - "Programming Language :: Python :: 3"
+  - "License :: OSI Approved :: BSD License"
+
+keywords:
+  - "kibana"
+  - "elasticsearch"
+  - "elasticsearch-client"

@@ -3,8 +3,8 @@ import os
 import time
 import logging
 
-from . import NAME
-from . import ElasticsearchKibanaCLIException
+from elasticsearch_kibana_cli import __title__ as NAME
+from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
 
 
 class ColoredLoggingFormatter(logging.Formatter):

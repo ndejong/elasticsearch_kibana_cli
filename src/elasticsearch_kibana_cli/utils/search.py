@@ -8,10 +8,10 @@ import dpath.util
 from collections import OrderedDict
 from elasticsearch_dsl import Q, A
 
-from . import NAME
-from . import VERSION
-from . import ElasticsearchKibanaCLIException
-from . import ElasticsearchKibanaCLILogger
+from elasticsearch_kibana_cli import __title__ as NAME
+from elasticsearch_kibana_cli import __version__ as VERSION
+from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
+from elasticsearch_kibana_cli.utils.logger import ElasticsearchKibanaCLILogger
 
 
 class ElasticsearchKibanaCLISearch:

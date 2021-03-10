@@ -8,12 +8,11 @@ import requests
 import threading
 from bs4 import BeautifulSoup
 
-from . import NAME
-from . import VERSION
-from . import ElasticsearchKibanaCLIException
-from . import ElasticsearchKibanaCLILogger
-
-from .internal_proxy import ElasticsearchKibanaCLIInternalProxy
+from elasticsearch_kibana_cli import __title__ as NAME
+from elasticsearch_kibana_cli import __version__ as VERSION
+from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
+from elasticsearch_kibana_cli.utils.logger import ElasticsearchKibanaCLILogger
+from elasticsearch_kibana_cli.utils.internal_proxy import ElasticsearchKibanaCLIInternalProxy
 
 
 class ElasticsearchKibanaCLIConnection:
