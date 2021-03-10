@@ -1,23 +1,21 @@
 
 import os
 import tempfile
-import pytest
-from unittest.mock import patch
-import elasticsearch_kibana_cli
+from elasticsearch_kibana_cli import ElasticsearchKibanaCLI
 
 
 def test_version_exist():
-    assert elasticsearch_kibana_cli.VERSION is not None
+    assert ElasticsearchKibanaCLI.VERSION is not None
 
 
 def test_name_exist():
-    assert elasticsearch_kibana_cli.NAME is not None
+    assert ElasticsearchKibanaCLI.NAME is not None
 
 
 def test_search_definitions(capfd):
     config_filename = __faux_config_file()
     os.environ['ELASTICSEARCHKIBANACLI_CONFIG_FILENAME'] = config_filename
-    elasticsearch_kibana_cli.ElasticsearchKibanaCLI(debug=True).search_definitions()
+    ElasticsearchKibanaCLI.ElasticsearchKibanaCLI(debug=True).search_definitions()
     stdout, stderr = capfd.readouterr()
     os.unlink(config_filename)
     assert 'test01' in stdout

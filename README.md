@@ -20,15 +20,6 @@ proxy.
 pip3 install elasticsearch-kibana-cli
 ```
 
-#### via Source
-```bash
-git clone https://github.com/ndejong/elasticsearch_kibana_cli
-cd elasticsearch_kibana_cli
-python3 -m venv venv
-./venv/bin/activate
-pip3 install -r requirements.txt
-```
-
 ## Configuration
 The provided `eskbcli-sample.yml` demonstrates the configuration options available to create 
 search_definitions.  Under the hood, query strings are generated using the `Q` function from the
