@@ -1,6 +1,4 @@
 
----
-
 ElasticsearchKibanaCli:
 
   base_uri: https://kibana.internal
@@ -20,9 +18,6 @@ ElasticsearchKibanaCli:
     example01:
 
       index: nginx-access-*
-
-      # size: 1000
-
       splits: 5
 
       source:
@@ -32,7 +27,27 @@ ElasticsearchKibanaCli:
         - "geoip.country_name"
 
       search:
+        must:
+          range:
+            @timestamp:
+              'lte': 'now'
+              'gte': '-60m'
+          query_string:
+            - query: "response_status:429 AND request_path:\\/auth\\/login*"
 
+    # ===
+    example02:
+
+      index: nginx-access-*
+      splits: 5
+
+      source:
+        - "path"
+        - "remote_ip"
+        - "geoip.asn"
+        - "geoip.country_name"
+
+      search:
         must:
           range:
             @timestamp:
@@ -41,11 +56,6 @@ ElasticsearchKibanaCli:
           match:
             - hostname: "awesome.internal"
             - path: "login"
-
         must_not:
           match:
             - geoip.country_name: "Australia"
-
-#        filter:
-#          term:
-#            - hostname: "awesome.internal"
