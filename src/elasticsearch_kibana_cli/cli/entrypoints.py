@@ -24,10 +24,20 @@ def eskbcli():
             The Elasticsearch Kibana CLI provides a configurable shell interface to query the Elasticsearch backend 
             via the Kibana frontend which is useful in situations where the Elasticsearch backend is not otherwise 
             accessible. Configuration options are available that permit HTTP request header overrides that hence enable 
-            access to Kibana in more complex situations that may require additional authentication such as when Kibana is 
-            behind an OAuth reverse proxy.
+            access to Kibana in more complex situations that may require additional authentication such as when Kibana 
+            exists behind an OAuth reverse proxy or other zero-trust-network environment.
         """,
     )
+
+    # Note to self: consider click-cli arrangement for release args
+    #
+    #   eskbcli -v -c <config_file> list
+    #   eskbcli -v -c <config_file> search <search_name>
+    #   eskbcli -v -c <config_file> -o <output_file> search <search_name>
+    #
+    #   eskbcli -v -c <config_file> search -sc <split_count> <search_name>
+    #   eskbcli -v -c <config_file> search -np <search_name>
+    #   eskbcli -v -c <config_file> search -k <kibana_version> <search_name>
 
     parser.add_argument('-s', type=str, metavar='<search>', default=None,
                         help='The search_definition name from configuration to use and execute (hint: use -D to list).')

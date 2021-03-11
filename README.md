@@ -3,13 +3,11 @@
 [![PyPi](https://img.shields.io/pypi/v/elasticsearch-kibana-cli.svg)](https://pypi.org/project/elasticsearch-kibana-cli/)
 [![Build Status](https://api.travis-ci.org/ndejong/elasticsearch_kibana_cli.svg?branch=master)](https://api.travis-ci.org/ndejong/elasticsearch_kibana_cli)
 
-The Elasticsearch Kibana CLI provides a configurable shell interface to
-query the Elasticsearch backend via the Kibana frontend which is useful in
-situations where the Elasticsearch backend is not otherwise accessible.
-Configuration options are available that permit HTTP request header overrides
-that hence enable access to Kibana in more complex situations that may require
-additional authentication such as when Kibana is behind an OAuth reverse
-proxy.
+The Elasticsearch Kibana CLI provides a configurable shell interface to query the Elasticsearch backend 
+via the Kibana frontend which is useful in situations where the Elasticsearch backend is not otherwise 
+accessible. Configuration options are available that permit HTTP request header overrides that hence enable 
+access to Kibana in more complex situations that may require additional authentication such as when Kibana 
+exists behind an OAuth reverse proxy or other zero-trust-network environment.
 
 ## Project
 * [github.com/ndejong/elasticsearch_kibana_cli](https://github.com/ndejong/elasticsearch_kibana_cli)
