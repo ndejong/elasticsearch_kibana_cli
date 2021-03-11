@@ -280,4 +280,5 @@ class ElasticsearchKibanaCLISearch:
         for return_payloads_k, return_payloads_v in return_payloads.items():
             ndjson_return_payload = '{}{}\n'.format(ndjson_return_payload, json.dumps(return_payloads_v))
 
+        logger.debug(ndjson_return_payload)
         return ndjson_return_payload
