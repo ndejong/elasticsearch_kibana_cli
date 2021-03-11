@@ -174,7 +174,7 @@ class ElasticsearchKibanaCLISearch:
         return_payloads = OrderedDict()
         for index, json_payload in enumerate(ndjson_payload.split('\n')):
             if len(json_payload) > 0:
-                return_payloads[str(index)] = json.loads(json_payload)
+                return_payloads[index] = json.loads(json_payload)
 
         payload_ranges = OrderedDict()
         for payload_k, payload_v in return_payloads.items():
