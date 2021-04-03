@@ -24,15 +24,17 @@ elasticsearch_kibana_interface = None
 @click.version_option(VERSION)
 def eskbcli_interface(config, verbose, quiet):
     """
-    The Elasticsearch Kibana CLI (eskbcli) provides a configurable shell interface to query the Elasticsearch backend
-    via the Kibana frontend which is useful in situations where the Elasticsearch backend is not otherwise accessible.
+    ElasticSearch Kibana CLI (`eskbcli`) provides a shell interface to query an ElasticSearch backend via
+    the Kibana frontend which is useful in situations where the ElasticSearch backend is not otherwise
+    accessible.
 
-    If desired, it is possible to copy-paste expressions directly from the Kibana user-interface into an eskbcli
-    configuration and simply obtain the resulting data.
+    ElasticSearch Kibana CLI makes it possible to copy-paste query expressions directly from the Kibana
+    user-interface and then easily access very large sets of result data.  This makes the `eskbcli` useful
+    in SecOps situations where the ability to rapidly move from a Kibana query to raw data is valued.
 
-    Configuration options are available that permit HTTP request header injection that make it possible to access
-    Kibana in complex situations where additional user-authentication may be required such as situations where Kibana
-    exists behind an OAuth reverse proxy or other zero-trust-network arrangement.
+    Configuration options are available to adjust http-headers so-as-to enable access to Kibana in
+    situations that require complex user-authentication such as when Kibana exists behind an OAuth
+    reverse proxy or other session-based authentication arrangement.
 
     Documentation available https://elasticsearch-kibana-cli.readthedocs.io
     """
@@ -63,7 +65,7 @@ def eskbcli_interface(config, verbose, quiet):
 @click.option('-o', '--out', help='Filename to write data output.', required=False)
 def list_searches(**kwargs):
     """
-    List the available eskbcli search names
+    List the available eskbcli search names.
     """
     output_handler(
         data=elasticsearch_kibana_interface.list_searches(),
@@ -76,7 +78,7 @@ def list_searches(**kwargs):
 @click.argument('search_name', required=True)
 def show_search(**kwargs):
     """
-    Show the named eskbcli search configuration
+    Show the named eskbcli search configuration.
     """
     output_handler(
         data=elasticsearch_kibana_interface.show_search(name=kwargs['search_name']),
@@ -93,7 +95,7 @@ def show_search(**kwargs):
 @click.argument('search_name', required=True)
 def perform_search(**kwargs):
     """
-    Show the named eskbcli search configuration
+    Execute the named search configuration.
     """
     output_handler(
         data=elasticsearch_kibana_interface.perform_search(
