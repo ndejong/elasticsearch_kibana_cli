@@ -1,6 +1,4 @@
 
-import time
-
 from elasticsearch_kibana_cli import __title__ as NAME
 from elasticsearch_kibana_cli import __version__ as VERSION
 from elasticsearch_kibana_cli import __cli_name__ as CLI_NAME
