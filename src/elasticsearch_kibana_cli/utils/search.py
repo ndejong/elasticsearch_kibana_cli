@@ -11,6 +11,7 @@ from elasticsearch_dsl import Q, A
 from elasticsearch_kibana_cli import __title__ as NAME
 from elasticsearch_kibana_cli import __version__ as VERSION
 from elasticsearch_kibana_cli import __search_split_bucket_limit__ as SEARCH_SPLIT_BUCKET_LIMIT
+from elasticsearch_kibana_cli import __search_default_timeout_seconds__ as SEARCH_DEFAULT_TIMEOUT_SECONDS
 
 
 from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
@@ -28,7 +29,7 @@ class ElasticsearchKibanaCLISearch:
     def __init__(self, connection):
         self.connection = connection
 
-    def msearch(self, index, search, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None, splits=1, range_keyword='range'):
+    def msearch(self, index, search, aggs=None, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None, splits=1, range_keyword='range'):
 
         url = '{}/elasticsearch/_msearch'.format(self.connection.client_connect_address)
 
@@ -39,6 +40,7 @@ class ElasticsearchKibanaCLISearch:
                 self.__payload_header(copy.copy(index)),
                 self.__payload_body(
                     query_params=copy.copy(search),
+                    aggs_params=copy.copy(aggs),
                     size=copy.copy(size),
                     source=copy.copy(source)
                 )
@@ -71,7 +73,9 @@ class ElasticsearchKibanaCLISearch:
                 return_list.extend(response_data['responses'][hit_index]['hits']['hits'])
             except KeyError: pass
             except IndexError: pass
-            if value is not None and value > SEARCH_SPLIT_BUCKET_LIMIT:
+            if value is None:
+                value = 0
+            elif value > SEARCH_SPLIT_BUCKET_LIMIT:
                 logger.warning('Search split {} has {} hit-results which exceeds the {} limit, '
                                'results truncated!'.format(hit_index, value, SEARCH_SPLIT_BUCKET_LIMIT))
             hit_total = hit_total + value
@@ -92,10 +96,10 @@ class ElasticsearchKibanaCLISearch:
             'preference': int(round(time.time() * 1000))
         })
 
-    def __payload_body(self, query_params, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None):
+    def __payload_body(self, query_params, aggs_params, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None):
 
         if size > SEARCH_SPLIT_BUCKET_LIMIT or size < 1:
-            raise ElasticsearchKibanaCLIException('Payload size is out-of-bounds in __parse_query_param()', size)
+            raise ElasticsearchKibanaCLIException('Payload size is out-of-bounds in __payload_body()', size)
 
         for param_name in ['must', 'must_not', 'should', 'should_not', 'filter']:
             if param_name in query_params:
@@ -103,22 +107,26 @@ class ElasticsearchKibanaCLISearch:
             else:
                 query_params[param_name] = []
 
+        aggs = {}  # for another day
+
         query = Q(
             'bool',
             must=query_params['must'],
             must_not=query_params['must_not'],
             should=query_params['should'],
             should_not=query_params['should_not'],
-            minimum_should_match=query_params['minimum_should_match'] if 'minimum_should_match' in query_params else (1 if len(query_params['should']) > 0 else None),
+            minimum_should_match=query_params['minimum_should_match']
+                if 'minimum_should_match' in query_params else (1 if len(query_params['should']) > 0 else None),
             filter=query_params['filter']
         )
 
         payload_values = {
             'source': json.dumps(source) if source is not None else '[ ]',
             'size': size,
-            'aggs': '{ }',
-            'timeout': '"' + (str(query_params['timeout']) if 'timeout' in query_params else '30s') + '"',
-            'query': json.dumps(query.to_dict())
+            'aggs': json.dumps(aggs),
+            'query': json.dumps(query.to_dict()),
+            'timeout': '"' + (str(query_params['timeout']) if 'timeout' in query_params else '{}s'.
+                              format(SEARCH_DEFAULT_TIMEOUT_SECONDS)) + '"'
         }
 
         payload_json = """
@@ -133,8 +141,8 @@ class ElasticsearchKibanaCLISearch:
               "_source": __SOURCE__,
               "size": __SIZE__,
               "aggs": __AGGS__,
-              "timeout": __TIMEOUT__,
-              "query": __QUERY__
+              "query": __QUERY__,
+              "timeout": __TIMEOUT__
             }
         """
 
