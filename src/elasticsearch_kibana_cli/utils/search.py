@@ -10,8 +10,14 @@ from elasticsearch_dsl import Q, A
 
 from elasticsearch_kibana_cli import __title__ as NAME
 from elasticsearch_kibana_cli import __version__ as VERSION
+from elasticsearch_kibana_cli import __search_split_bucket_limit__ as SEARCH_SPLIT_BUCKET_LIMIT
+
+
 from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
-from elasticsearch_kibana_cli.utils.logger import ElasticsearchKibanaCLILogger
+from elasticsearch_kibana_cli.utils.logger import Logger
+
+
+logger = Logger(name=NAME).logging
 
 
 class ElasticsearchKibanaCLISearch:
@@ -20,22 +26,22 @@ class ElasticsearchKibanaCLISearch:
     user_agent = '{}/{}'.format(NAME, VERSION)
 
     def __init__(self, connection):
-
-        global logger
-        logger = ElasticsearchKibanaCLILogger().logger
-
         self.connection = connection
 
-    def msearch(self, index, search, size=10000, source=None, splits=1, range_keyword='range'):
+    def msearch(self, index, search, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None, splits=1, range_keyword='range'):
 
         url = '{}/elasticsearch/_msearch'.format(self.connection.client_connect_address)
 
         payload_data = ''
-        for split_index in range(0, splits):
+        for _ in range(0, splits):
             payload_data = '{}{}\n{}\n'.format(
                 payload_data,
                 self.__payload_header(copy.copy(index)),
-                self.__payload_body(copy.copy(search), copy.copy(size), copy.copy(source))
+                self.__payload_body(
+                    query_params=copy.copy(search),
+                    size=copy.copy(size),
+                    source=copy.copy(source)
+                )
             )
 
         if splits > 1:
@@ -65,14 +71,17 @@ class ElasticsearchKibanaCLISearch:
                 return_list.extend(response_data['responses'][hit_index]['hits']['hits'])
             except KeyError: pass
             except IndexError: pass
-            if value is not None and value > 10000:
-                logger.warning('Search split {} has {} hit-results which exceeds the 10000 limit, '
-                               'results truncated!'.format(hit_index, value))
+            if value is not None and value > SEARCH_SPLIT_BUCKET_LIMIT:
+                logger.warning('Search split {} has {} hit-results which exceeds the {} limit, '
+                               'results truncated!'.format(hit_index, value, SEARCH_SPLIT_BUCKET_LIMIT))
             hit_total = hit_total + value
 
         hit_count = len(return_list)
         logger.info('{} available-hits; {} returned-hits; {} average-hits-per-split; {} msearch-splits'.
                     format(hit_total, hit_count, int(hit_total/splits), splits))
+
+        if self.connection.internal_proxy:
+            time.sleep(0.1)  # allows internal_proxy threads to close-out
 
         return return_list
 
@@ -83,9 +92,9 @@ class ElasticsearchKibanaCLISearch:
             'preference': int(round(time.time() * 1000))
         })
 
-    def __payload_body(self, query_params, size=10000, source=None):
+    def __payload_body(self, query_params, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None):
 
-        if size > 10000 or size < 1:
+        if size > SEARCH_SPLIT_BUCKET_LIMIT or size < 1:
             raise ElasticsearchKibanaCLIException('Payload size is out-of-bounds in __parse_query_param()', size)
 
         for param_name in ['must', 'must_not', 'should', 'should_not', 'filter']:
@@ -280,5 +289,5 @@ class ElasticsearchKibanaCLISearch:
         for return_payloads_k, return_payloads_v in return_payloads.items():
             ndjson_return_payload = '{}{}\n'.format(ndjson_return_payload, json.dumps(return_payloads_v))
 
-        logger.debug(ndjson_return_payload)
+        # logger.debug(ndjson_return_payload)
         return ndjson_return_payload

@@ -1,28 +1,30 @@
 
 import os
 import tempfile
-from elasticsearch_kibana_cli import ElasticsearchKibanaCLI
+from elasticsearch_kibana_cli import ElasticsearchKibanaInterface
 
 
 def test_version_exist():
-    assert ElasticsearchKibanaCLI.VERSION is not None
+    assert ElasticsearchKibanaInterface.VERSION is not None
 
 
 def test_name_exist():
-    assert ElasticsearchKibanaCLI.NAME is not None
+    assert ElasticsearchKibanaInterface.NAME is not None
 
 
-def test_search_definitions(capfd):
+def test_list_searches():
     config_filename = __faux_config_file()
-    os.environ['ELASTICSEARCHKIBANACLI_CONFIG_FILENAME'] = config_filename
-    ElasticsearchKibanaCLI.ElasticsearchKibanaCLI(debug=True).search_definitions()
-    stdout, stderr = capfd.readouterr()
+    ls = ElasticsearchKibanaInterface.ElasticsearchKibanaInterface(config_filename=config_filename).list_searches()
     os.unlink(config_filename)
-    assert 'test01' in stdout
-    assert config_filename in stderr
+    assert 'test01' in ls
 
 
-# TODO: add more tests with deeper coverage
+def test_show_search():
+    config_filename = __faux_config_file()
+    ss = ElasticsearchKibanaInterface.ElasticsearchKibanaInterface(config_filename=config_filename).show_search(name='test01')
+    os.unlink(config_filename)
+    assert 'splits' in ss.keys()
+    assert ss['splits'] == 5
 
 
 def __faux_config_file(filename=None):

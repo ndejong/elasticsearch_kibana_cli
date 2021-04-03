@@ -9,10 +9,14 @@ import threading
 from bs4 import BeautifulSoup
 
 from elasticsearch_kibana_cli import __title__ as NAME
+from elasticsearch_kibana_cli import __cli_name__ as CLI_NAME
 from elasticsearch_kibana_cli import __version__ as VERSION
-from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
-from elasticsearch_kibana_cli.utils.logger import ElasticsearchKibanaCLILogger
+from elasticsearch_kibana_cli.utils.logger import Logger
 from elasticsearch_kibana_cli.utils.internal_proxy import ElasticsearchKibanaCLIInternalProxy
+from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
+
+
+logger = Logger(name=NAME).logging
 
 
 class ElasticsearchKibanaCLIConnection:
@@ -23,10 +27,6 @@ class ElasticsearchKibanaCLIConnection:
     client_connect_address= None
 
     def __init__(self, proxy_config=None):
-
-        global logger
-        logger = ElasticsearchKibanaCLILogger().logger
-
         if proxy_config is not None:
             self.internal_proxy = ElasticsearchKibanaCLIInternalProxy(config=proxy_config)
 
@@ -63,8 +63,7 @@ class ElasticsearchKibanaCLIConnection:
 
     def __kbn_metadata(self, use_cache=True):
         if self.client_connect_address is None:
-            raise ElasticsearchKibanaCLIException('Attempt to call __kbn_metadata '
-                                                  'before client_connect_address is set!')
+            raise ElasticsearchKibanaCLIException('Attempt to call __kbn_metadata before client_connect_address is set!')
 
         cache_filename = '{}-metadata.cache'.format(self.__kbn_cache_basename())
 
@@ -101,7 +100,7 @@ class ElasticsearchKibanaCLIConnection:
         return os.path.join(
             base_path,
             '{}-{}'.format(
-                str(__name__).lower().replace('.','-'),
+                CLI_NAME,
                 hashlib.md5(self.client_connect_address.encode('utf-8')).hexdigest()[0:8]
             )
         )

@@ -1,5 +1,5 @@
 
-ElasticsearchKibanaCli:
+elasticsearch_kibana_cli:
 
   base_uri: https://kibana.internal
 
