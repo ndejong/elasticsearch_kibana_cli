@@ -1,0 +1,30 @@
+
+elasticsearch_kibana_cli:
+
+  base_uri: https://kibana.awesome-company.internal
+
+  internal_proxy:
+    debug: false
+    header_overrides:
+      cookie: env:GCP_IAP_COOKIE
+
+  search_definitions:
+
+    example01-query-string:
+
+      index: logstash-rest-*
+      splits: 100
+
+      source:
+        - "user_agent"
+        - "remote_ip"
+        - "http_status"
+
+      search:
+        must:
+          range:
+            @timestamp:
+              'lte': 'now'
+              'gte': '-30m'
+          query_string:
+            - query: "type:auth AND http_status:429 AND user_agent:curl*"

@@ -17,24 +17,27 @@ elasticsearch_kibana_interface = None
 
 
 @click.group()
-@click.option('-c', '--config', help='Overrides env {} config file setting and default {} config file setting.'
+@click.option('-c', '--config', help='Config file location; overrides {} environment var and the default {} value.'
               .format(ENV_CONFIG_FILENAME, config_file_default))
 @click.option('-v', '--verbose', is_flag=True, help='Verbose logging messages (debug level).')
 @click.option('-q', '--quiet', is_flag=True, help='Quiet mode, takes priority over --verbose')
 @click.version_option(VERSION)
 def eskbcli_interface(config, verbose, quiet):
     """
-    ElasticSearch Kibana CLI (`eskbcli`) provides a shell interface to query an ElasticSearch backend via
-    the Kibana frontend which is useful in situations where the ElasticSearch backend is not otherwise
-    accessible.
+    ElasticSearch Kibana CLI (`eskbcli`) provides a shell interface to query
+    an ElasticSearch backend via the Kibana frontend which is useful in
+    situations where the ElasticSearch backend is not otherwise accessible.
 
-    ElasticSearch Kibana CLI makes it possible to copy-paste query expressions directly from the Kibana
-    user-interface and then easily access very large sets of result data.  This makes the `eskbcli` useful
-    in SecOps situations where the ability to rapidly move from a Kibana query to raw data is valued.
+    ElasticSearch Kibana CLI makes it possible to copy-paste query expressions
+    directly from the Kibana user-interface and then easily access very large
+    sets of result data.  This makes the `eskbcli` useful in SecOps situations
+    where the ability to rapidly move from a Kibana query to raw data is
+    valued.
 
-    Configuration options are available to adjust http-headers so-as-to enable access to Kibana in
-    situations that require complex user-authentication such as when Kibana exists behind an OAuth
-    reverse proxy or other session-based authentication arrangement.
+    Configuration options are available to adjust http-headers so-as-to enable
+    access to Kibana in situations that require complex user-authentication
+    such as when Kibana exists behind an OAuth reverse proxy or other session-
+    based authentication arrangement.
 
     Documentation available https://elasticsearch-kibana-cli.readthedocs.io
     """

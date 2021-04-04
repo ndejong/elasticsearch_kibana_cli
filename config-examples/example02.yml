@@ -1,0 +1,30 @@
+
+elasticsearch_kibana_cli:
+
+  base_uri: https://kibana.internal
+
+  search_definitions:
+
+    example02-match-operators:
+
+      index: logstash-api-*
+      splits: 10
+
+      source:
+        - "path"
+        - "remote_ip"
+        - "geoip.asn"
+        - "geoip.country_name"
+
+      search:
+        must:
+          range:
+            @timestamp:
+              'lte': '2021-04-01 04:17:15.126 AEST'
+              'gte': '2021-04-01 01:22:00.555 AEST'
+          match:
+            - hostname: "api.*"
+            - path: "\\/v1\\/user\\/auth"
+        must_not:
+          match:
+            - geoip.country_name: "Australia"

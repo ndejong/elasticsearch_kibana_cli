@@ -56,6 +56,26 @@ renderer:
       source: ../README.md
       directory: '..'
 
+#    - title: Usage
+#      preamble:
+#        weight: 10
+#      contents:
+#        - elasticsearch_kibana_cli.cli.click_cli.*
+
+    - title: Config File
+      preamble:
+        weight: 20
+      source: config-file.md
+      children:
+      - title: Example01
+        preamble:
+          weight: 21
+        source: config-file-example01.md
+      - title: Example02
+        preamble:
+          weight: 22
+        source: config-file-example02.md
+
     - title: Project
       preamble:
         weight: 40
