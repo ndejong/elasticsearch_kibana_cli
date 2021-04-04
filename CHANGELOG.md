@@ -1,3 +1,8 @@
+## 0.3.1 (2021-04-04)
+
+* __general__
+    * **feature**: Adds better documentation via readthedocs
+
 ## 0.3.0 (2021-04-03)
 
 * __general__
