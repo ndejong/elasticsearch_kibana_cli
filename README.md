@@ -21,7 +21,7 @@ Documentation available https://elasticsearch-kibana-cli.readthedocs.io
 
 ## Installation
 ```shell
-user@computer:~$ pip3 install elasticsearch-kibana-cli
+user@computer:~$ pip install elasticsearch-kibana-cli
 ```
 
 ## Usage
@@ -44,7 +44,7 @@ Commands:
 ```
 
 ## Config files
-Refer to the config file [documentation](https://elasticsearch-kibana-cli.readthedocs.io/config-file/)
+Refer to the config file [documentation](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/docs/config-file/)
 and worked examples with description details.
 
 ## Project

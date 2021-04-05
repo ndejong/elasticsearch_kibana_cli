@@ -16,7 +16,7 @@ test-driver:
   type: pytest
 
 requirements:
-  - python ^3.5
+  - python ^3.6
   - bs4
   - maya
   - dpath
@@ -30,7 +30,9 @@ requirements:
 classifiers:
   - "Intended Audience :: System Administrators"
   - "Intended Audience :: Information Technology"
-  - "Programming Language :: Python :: 3"
+  - "Programming Language :: Python :: 3.6"
+  - "Programming Language :: Python :: 3.7"
+  - "Programming Language :: Python :: 3.8"
   - "License :: OSI Approved :: BSD License"
 
 keywords:
