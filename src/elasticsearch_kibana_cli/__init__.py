@@ -3,7 +3,7 @@
 
 __title__ = "elasticsearch_kibana_cli"
 __author__ = 'Nicholas de Jong <contact@nicholasdejong.com>'
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 __license__ = 'BSD2'
 
 __cli_name__ = 'eskbcli'

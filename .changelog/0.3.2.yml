@@ -1,0 +1,6 @@
+release_date: '2021-04-05'
+changes:
+- type: fix
+  component: general
+  description: Updates supported Python versions
+  fixes: []

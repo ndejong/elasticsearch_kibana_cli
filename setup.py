@@ -29,7 +29,7 @@ requirements = [
 
 setuptools.setup(
   name = 'elasticsearch_kibana_cli',
-  version = '0.3.1',
+  version = '0.3.2',
   author = 'Nicholas de Jong',
   author_email = 'contact@nicholasdejong.com',
   description = 'CLI interface to query Elasticsearch backend via the Kibana frontend.',
@@ -43,7 +43,7 @@ setuptools.setup(
   install_requires = requirements,
   extras_require = {},
   tests_require = [],
-  python_requires = '>=3.5.0,<4.0.0',
+  python_requires = '>=3.6.0,<4.0.0',
   data_files = [],
   entry_points = {
     'console_scripts': [
@@ -52,6 +52,6 @@ setuptools.setup(
   },
   cmdclass = {},
   keywords = ['kibana', 'elasticsearch', 'elasticsearch-client'],
-  classifiers = ['Intended Audience :: System Administrators', 'Intended Audience :: Information Technology', 'Programming Language :: Python :: 3', 'License :: OSI Approved :: BSD License'],
+  classifiers = ['Intended Audience :: System Administrators', 'Intended Audience :: Information Technology', 'Programming Language :: Python :: 3.6', 'Programming Language :: Python :: 3.7', 'Programming Language :: Python :: 3.8', 'License :: OSI Approved :: BSD License'],
   zip_safe = True,
 )
