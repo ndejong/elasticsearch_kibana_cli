@@ -47,7 +47,7 @@ class ElasticsearchKibanaCLIConnection:
 
         return self.client_connect_address
 
-    def ping(self, path='/api/spaces/space'):
+    def ping(self, path='/app/monitoring'):
         url = '{}{}'.format(self.client_connect_address, path)
         headers = {'user-agent': self.user_agent}
         r = requests.get(url, headers=headers)
