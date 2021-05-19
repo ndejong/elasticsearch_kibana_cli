@@ -73,15 +73,26 @@ class ElasticsearchKibanaCLIConnection:
                 return json.load(f)
 
         headers = {'user-agent': self.user_agent}
-        r = requests.get(self.client_connect_address, headers=headers)
 
+        r = requests.get(self.client_connect_address, headers=headers)
         if r.status_code != 200:
             raise ElasticsearchKibanaCLIException('Unable to obtain data from {}'.format(self.client_connect_address))
 
-        soup = BeautifulSoup(r.content, 'html.parser')
-        metadata_find = soup.find('kbn-injected-metadata')
+        if 'defaultRoute' not in r.text:
+            logger.debug('Attempting to collect kbn_metadata via "kbn-injected-metadata" element')
+            soup = BeautifulSoup(r.content, 'html.parser')
+            metadata_find = soup.find('kbn-injected-metadata')
+        else:
+            logger.debug('Attempting to collect kbn_metadata via "kbn-initial-state" element')
+            url = '{}{}'.format(self.client_connect_address, '/app/kibana')
+            r = requests.get(url, headers=headers)
+            if r.status_code != 200:
+                raise ElasticsearchKibanaCLIException('Unable to obtain data from {}'.format(url))
+            soup = BeautifulSoup(r.content, 'html.parser')
+            metadata_find = soup.find('kbn-initial-state')
+
         if not metadata_find:
-            raise ElasticsearchKibanaCLIException('Unable to locate kbn-injected-metadata '
+            raise ElasticsearchKibanaCLIException('Unable to locate element for kbn_metadata '
                                                   'within {}'.format(self.client_connect_address))
 
         metadata = json.loads(metadata_find['data'])
