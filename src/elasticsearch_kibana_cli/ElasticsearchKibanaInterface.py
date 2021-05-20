@@ -75,7 +75,9 @@ class ElasticsearchKibanaInterface:
             if self.connection.ping():
                 logger.info('Ping okay {}'.format(self.connection.client_connect_address))
             else:
-                raise ElasticsearchKibanaCLIException('Unable to ping Kibana endpoint', format(self.connection.client_connect_address))
+                raise ElasticsearchKibanaCLIException(
+                    'Unable to ping Kibana endpoint', format(self.connection.client_connect_address)
+                )
         else:
             logger.debug('Skipping ping endpoint check via {}'.format(self.connection.client_connect_address))
 

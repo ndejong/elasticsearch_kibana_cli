@@ -21,7 +21,10 @@ def test_list_searches():
 
 def test_show_search():
     config_filename = __faux_config_file()
-    ss = ElasticsearchKibanaInterface.ElasticsearchKibanaInterface(config_filename=config_filename).show_search(name='test01')
+    ss = ElasticsearchKibanaInterface.ElasticsearchKibanaInterface(
+        config_filename=config_filename
+    ).show_search(name='test01')
+
     os.unlink(config_filename)
     assert 'splits' in ss.keys()
     assert ss['splits'] == 5

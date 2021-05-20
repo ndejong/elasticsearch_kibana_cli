@@ -24,7 +24,7 @@ class ElasticsearchKibanaCLIConnection:
     user_agent = '{}/{}'.format(NAME, VERSION)
     kbn_version = None
     internal_proxy = None
-    client_connect_address= None
+    client_connect_address = None
 
     def __init__(self, proxy_config=None):
         if proxy_config is not None:
@@ -63,7 +63,9 @@ class ElasticsearchKibanaCLIConnection:
 
     def __kbn_metadata(self, use_cache=True):
         if self.client_connect_address is None:
-            raise ElasticsearchKibanaCLIException('Attempt to call __kbn_metadata before client_connect_address is set!')
+            raise ElasticsearchKibanaCLIException(
+                'Attempt to call __kbn_metadata before client_connect_address is set!'
+            )
 
         cache_filename = '{}-metadata.cache'.format(self.__kbn_cache_basename())
 

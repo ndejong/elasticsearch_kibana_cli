@@ -6,11 +6,11 @@ import copy
 import requests
 import dpath.util
 from collections import OrderedDict
-from elasticsearch_dsl import Q, A
+from elasticsearch_dsl import Q
 
 from elasticsearch_kibana_cli import __title__ as NAME
 from elasticsearch_kibana_cli import __version__ as VERSION
-from elasticsearch_kibana_cli import __search_split_bucket_limit__ as SEARCH_SPLIT_BUCKET_LIMIT
+from elasticsearch_kibana_cli import __search_split_bucket_limit__ as SEARCH_SPLIT_LIMIT
 from elasticsearch_kibana_cli import __search_default_timeout_seconds__ as SEARCH_DEFAULT_TIMEOUT_SECONDS
 
 
@@ -29,7 +29,7 @@ class ElasticsearchKibanaCLISearch:
     def __init__(self, connection):
         self.connection = connection
 
-    def msearch(self, index, search, aggs=None, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None, splits=1, range_keyword='range'):
+    def msearch(self, index, search, aggs=None, size=SEARCH_SPLIT_LIMIT, source=None, splits=1, range_keyword='range'):
 
         url = '{}/elasticsearch/_msearch'.format(self.connection.client_connect_address)
 
@@ -71,18 +71,20 @@ class ElasticsearchKibanaCLISearch:
             try:
                 value = response_data['responses'][hit_index]['hits']['total']  # responses/0/hits/total
                 return_list.extend(response_data['responses'][hit_index]['hits']['hits'])
-            except KeyError: pass
-            except IndexError: pass
+            except KeyError:
+                pass
+            except IndexError:
+                pass
             if value is None:
                 value = 0
-            elif value > SEARCH_SPLIT_BUCKET_LIMIT:
+            elif value > SEARCH_SPLIT_LIMIT:
                 logger.warning('Search split {} has {} hit-results which exceeds the {} limit, '
-                               'results truncated!'.format(hit_index, value, SEARCH_SPLIT_BUCKET_LIMIT))
+                               'results truncated!'.format(hit_index, value, SEARCH_SPLIT_LIMIT))
             hit_total = hit_total + value
 
         hit_count = len(return_list)
         logger.info('{} available-hits; {} returned-hits; {} average-hits-per-split; {} msearch-splits'.
-                    format(hit_total, hit_count, int(hit_total/splits), splits))
+                    format(hit_total, hit_count, int(hit_total / splits), splits))
 
         if self.connection.internal_proxy:
             time.sleep(0.1)  # allows internal_proxy threads to close-out
@@ -96,9 +98,9 @@ class ElasticsearchKibanaCLISearch:
             'preference': int(round(time.time() * 1000))
         })
 
-    def __payload_body(self, query_params, aggs_params, size=SEARCH_SPLIT_BUCKET_LIMIT, source=None):
+    def __payload_body(self, query_params, aggs_params, size=SEARCH_SPLIT_LIMIT, source=None):
 
-        if size > SEARCH_SPLIT_BUCKET_LIMIT or size < 1:
+        if size > SEARCH_SPLIT_LIMIT or size < 1:
             raise ElasticsearchKibanaCLIException('Payload size is out-of-bounds in __payload_body()', size)
 
         for param_name in ['must', 'must_not', 'should', 'should_not', 'filter']:
@@ -115,8 +117,9 @@ class ElasticsearchKibanaCLISearch:
             must_not=query_params['must_not'],
             should=query_params['should'],
             should_not=query_params['should_not'],
-            minimum_should_match=query_params['minimum_should_match']
-                if 'minimum_should_match' in query_params else (1 if len(query_params['should']) > 0 else None),
+            minimum_should_match=query_params['minimum_should_match'] if 'minimum_should_match' in query_params else (
+                1 if len(query_params['should']) > 0 else None
+            ),
             filter=query_params['filter']
         )
 
@@ -137,7 +140,6 @@ class ElasticsearchKibanaCLISearch:
               "script_fields": { },
               "docvalue_fields": [ ],
               "highlight": { },
-              
               "_source": __SOURCE__,
               "size": __SIZE__,
               "aggs": __AGGS__,
@@ -161,7 +163,7 @@ class ElasticsearchKibanaCLISearch:
                     query.append(Q(param_query_type, **{'@timestamp': timestamp}))
                 elif type(param_query_item) is dict:
                     for param_query_item_k, param_query_item_v in param_query_item.items():
-                        query.append(Q(param_query_type, **{param_query_item_k:param_query_item_v}))
+                        query.append(Q(param_query_type, **{param_query_item_k: param_query_item_v}))
                 else:
                     raise ElasticsearchKibanaCLIException('Unsupported type in __parse_query_param()', param_query_item)
         return query
@@ -209,9 +211,13 @@ class ElasticsearchKibanaCLISearch:
                 payload_range_path_next, payload_range_path_next_value = payload_range_value
                 payload_range_path_next_key = next(iter(payload_range_path_next_value.keys()))
                 if payload_range_path_next != payload_range_path:
-                    raise ElasticsearchKibanaCLIException('Ranges with different paths in __payload_range_splitter()')
+                    raise ElasticsearchKibanaCLIException(
+                        'Ranges with different paths in __payload_range_splitter()'
+                    )
                 if payload_range_path_next_key != payload_range_path_key:
-                    raise ElasticsearchKibanaCLIException('Ranges with different internal keys in __payload_range_splitter()')
+                    raise ElasticsearchKibanaCLIException(
+                        'Ranges with different internal keys in __payload_range_splitter()'
+                    )
 
         # determine the min max values within the discovered range definitions
         min = max = None
@@ -222,7 +228,7 @@ class ElasticsearchKibanaCLISearch:
                 '{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key)
             )
             for range_value_key, range_value_value in range_values.items():
-                if range_value_key.lower() in ['gt','gte','lt','lte']:
+                if range_value_key.lower() in ['gt', 'gte', 'lt', 'lte']:
                     if min is None:
                         min = range_value_value
                     elif range_value_value < min:
@@ -242,10 +248,10 @@ class ElasticsearchKibanaCLISearch:
                 part = [marker, marker + part_duration]
                 marker += part_duration
                 parts.append(part)
-            parts[len(parts)-1][1] = min_max_delta  # rewrite final value so it correctly lines up
+            parts[len(parts) - 1][1] = min_max_delta  # rewrite final value so it correctly lines up
             return parts
 
-        splits = split_min_max_delta(int(max-min), len(payload_ranges.keys()))
+        splits = split_min_max_delta(int(max - min), len(payload_ranges.keys()))
 
         splits_index = 0
         for range_key in payload_ranges.keys():
@@ -269,7 +275,7 @@ class ElasticsearchKibanaCLISearch:
                         (min + splits[splits_index][0])
                     )
 
-                elif splits_index == len(splits)-1 and 'lt' in limit_key.lower():
+                elif splits_index == len(splits) - 1 and 'lt' in limit_key.lower():
                     dpath.util.set(
                         return_payloads,
                         '{}/{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key, limit_key),
@@ -288,7 +294,9 @@ class ElasticsearchKibanaCLISearch:
                     )
 
                 else:
-                    raise ElasticsearchKibanaCLIException('Unsupported limit key in __payload_range_splitter()', limit_key)
+                    raise ElasticsearchKibanaCLIException(
+                        'Unsupported limit key in __payload_range_splitter()', limit_key
+                    )
 
             splits_index += 1
 

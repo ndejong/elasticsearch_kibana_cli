@@ -66,7 +66,7 @@ class ElasticsearchKibanaCLIInternalProxy:
                     headers[header_k.lower()] = self.header_overrides[header_k]
 
             if 'cookie' in headers.keys():
-                headers['cookie'] = headers['cookie'].replace('cookie: ','').replace('Cookie: ','').strip()
+                headers['cookie'] = headers['cookie'].replace('cookie: ', '').replace('Cookie: ', '').strip()
 
             if base_uri[-1:] == '/' and path[:1] == '/':
                 url = '{}{}'.format(base_uri, path[1:])
