@@ -1,6 +1,6 @@
 
 name: elasticsearch_kibana_cli
-version: 0.3.3
+version: 0.3.4
 license: BSD2
 author: Nicholas de Jong <contact@nicholasdejong.com>
 description: "CLI interface to query Elasticsearch backend via the Kibana frontend."
