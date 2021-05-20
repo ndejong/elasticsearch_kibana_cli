@@ -1,7 +1,7 @@
 # Elasticsearch Kibana CLI (eskbcli)
 [![PyPi](https://img.shields.io/pypi/v/elasticsearch-kibana-cli.svg)](https://pypi.python.org/pypi/elasticsearch-kibana-cli/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/elasticsearch-kibana-cli.svg)](https://github.com/ndejong/elasticsearch_kibana_cli/)
-[![Build Status](https://api.travis-ci.org/ndejong/elasticsearch_kibana_cli.svg?branch=master)](https://travis-ci.org/ndejong/elasticsearch_kibana_cli/)
+[![Build Status](https://github.com/ndejong/elasticsearch_kibana_cli/actions/workflows/build-tests.yml/badge.svg)](https://github.com/ndejong/elasticsearch_kibana_cli/actions/workflows/build-tests.yml)
 [![Read the Docs](https://img.shields.io/readthedocs/elasticsearch-kibana-cli)](https://elasticsearch-kibana-cli.readthedocs.io)
 ![License](https://img.shields.io/github/license/ndejong/elasticsearch_kibana_cli.svg)
 
