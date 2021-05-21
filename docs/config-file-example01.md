@@ -8,8 +8,8 @@ name `example01-query-string` in the following way -
 * Name the search definition `example01-query-string`; multiple search definitions with unique names may exist in the same file. 
 * Perform a search against indexes with names that match `logstash-rest-*`
 * Split the search up into 100x smaller searches (based on the `range` provided); this is done to manage Kibana result-count limits which are often set to 10k results.   
-* Search results `must` be within timestamps in the past 30 minutes and match the query string value.
 * Return the fields `user_agent`, `remote_ip`, and `http_status` only.
+* Search results `must` be within timestamps in the past 30 minutes and match the query string value.
 
 ```yaml
 elasticsearch_kibana_cli:
