@@ -1,0 +1,6 @@
+release_date: '2021-06-02'
+changes:
+- type: fix
+  component: general
+  description: Improved handling of response_data in error conditions
+  fixes: []
