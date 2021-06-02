@@ -62,7 +62,12 @@ class ElasticsearchKibanaCLISearch:
             headers=request_headers
         )
 
-        response_data = r.json()
+        try:
+            response_data = r.json()
+        except json.decoder.JSONDecodeError as e:
+            logger.error(e)
+            logger.error(r.text.replace("\r", "").replace("\n", ""))
+            return []
         return_list = []
 
         hit_total = 0
