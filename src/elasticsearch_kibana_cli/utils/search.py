@@ -75,9 +75,10 @@ class ElasticsearchKibanaCLISearch:
             if len(r.text) > 1:
                 logger.error(str(r.text.replace("\r", "").replace("\n", ""))[:128])
             return []
-        return_list = []
 
+        return_list = []
         hit_total = 0
+
         for hit_index in range(0, splits):
             value = None
             try:
@@ -232,7 +233,7 @@ class ElasticsearchKibanaCLISearch:
                     )
 
         # determine the min max values within the discovered range definitions
-        min = max = None
+        min_value = max_value = None
         limit_keys = []
         for range_key in payload_ranges.keys():
             range_values = dpath.util.get(
@@ -241,14 +242,14 @@ class ElasticsearchKibanaCLISearch:
             )
             for range_value_key, range_value_value in range_values.items():
                 if range_value_key.lower() in ['gt', 'gte', 'lt', 'lte']:
-                    if min is None:
-                        min = range_value_value
-                    elif range_value_value < min:
-                        min = range_value_value
-                    if max is None:
-                        max = range_value_value
-                    elif range_value_value > max:
-                        max = range_value_value
+                    if min_value is None:
+                        min_value = range_value_value
+                    elif range_value_value < min_value:
+                        min_value = range_value_value
+                    if max_value is None:
+                        max_value = range_value_value
+                    elif range_value_value > max_value:
+                        max_value = range_value_value
                     if range_value_key not in limit_keys:
                         limit_keys.append(range_value_key)
 
@@ -263,7 +264,7 @@ class ElasticsearchKibanaCLISearch:
             parts[len(parts) - 1][1] = min_max_delta  # rewrite final value so it correctly lines up
             return parts
 
-        splits = split_min_max_delta(int(max - min), len(payload_ranges.keys()))
+        splits = split_min_max_delta(int(max_value - min_value), len(payload_ranges.keys()))
 
         splits_index = 0
         for range_key in payload_ranges.keys():
@@ -273,7 +274,7 @@ class ElasticsearchKibanaCLISearch:
                     dpath.util.set(
                         return_payloads,
                         '{}/{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key, limit_key),
-                        (min + splits[splits_index][0])
+                        (min_value + splits[splits_index][0])
                     )
 
                 elif 'gt' in limit_key.lower():
@@ -284,14 +285,14 @@ class ElasticsearchKibanaCLISearch:
                     dpath.util.new(
                         return_payloads,
                         '{}/{}/{}/gte'.format(range_key, payload_range_path, payload_range_path_key),
-                        (min + splits[splits_index][0])
+                        (min_value + splits[splits_index][0])
                     )
 
                 elif splits_index == len(splits) - 1 and 'lt' in limit_key.lower():
                     dpath.util.set(
                         return_payloads,
                         '{}/{}/{}/{}'.format(range_key, payload_range_path, payload_range_path_key, limit_key),
-                        (min + splits[splits_index][1])
+                        (min_value + splits[splits_index][1])
                     )
 
                 elif 'lt' in limit_key.lower():
@@ -302,7 +303,7 @@ class ElasticsearchKibanaCLISearch:
                     dpath.util.new(
                         return_payloads,
                         '{}/{}/{}/lt'.format(range_key, payload_range_path, payload_range_path_key),
-                        (min + splits[splits_index][1])
+                        (min_value + splits[splits_index][1])
                     )
 
                 else:
