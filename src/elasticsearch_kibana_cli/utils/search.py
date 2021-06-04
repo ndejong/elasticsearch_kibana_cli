@@ -62,11 +62,18 @@ class ElasticsearchKibanaCLISearch:
             headers=request_headers
         )
 
+        if r.status_code >= 300:
+            logger.error('Unexpected http-response code {}'.format(r.status_code))
+            if len(r.text) > 1:
+                logger.error(str(r.text.replace("\r", "").replace("\n", ""))[:128])
+            return []
+
         try:
             response_data = r.json()
         except json.decoder.JSONDecodeError as e:
             logger.error(e)
-            logger.error(r.text.replace("\r", "").replace("\n", ""))
+            if len(r.text) > 1:
+                logger.error(str(r.text.replace("\r", "").replace("\n", ""))[:128])
             return []
         return_list = []
 
