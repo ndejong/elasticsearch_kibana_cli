@@ -17,6 +17,7 @@ test-driver:
 
 requirements:
   - python ^3.6
+  - click >=7.1
   - bs4
   - maya
   - dpath
@@ -33,6 +34,7 @@ classifiers:
   - "Programming Language :: Python :: 3.6"
   - "Programming Language :: Python :: 3.7"
   - "Programming Language :: Python :: 3.8"
+  - "Programming Language :: Python :: 3.9"
   - "License :: OSI Approved :: BSD License"
 
 keywords:

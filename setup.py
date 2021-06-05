@@ -16,6 +16,7 @@ else:
   long_description = None
 
 requirements = [
+  'click >=7.1.0',
   'bs4',
   'maya',
   'dpath',
@@ -52,6 +53,6 @@ setuptools.setup(
   },
   cmdclass = {},
   keywords = ['kibana', 'elasticsearch', 'elasticsearch-client'],
-  classifiers = ['Intended Audience :: System Administrators', 'Intended Audience :: Information Technology', 'Programming Language :: Python :: 3.6', 'Programming Language :: Python :: 3.7', 'Programming Language :: Python :: 3.8', 'License :: OSI Approved :: BSD License'],
+  classifiers = ['Intended Audience :: System Administrators', 'Intended Audience :: Information Technology', 'Programming Language :: Python :: 3.6', 'Programming Language :: Python :: 3.7', 'Programming Language :: Python :: 3.8', 'Programming Language :: Python :: 3.9', 'License :: OSI Approved :: BSD License'],
   zip_safe = True,
 )
