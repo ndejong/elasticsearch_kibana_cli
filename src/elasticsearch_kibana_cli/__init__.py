@@ -8,6 +8,6 @@ __license__ = 'BSD2'
 
 __cli_name__ = 'eskbcli'
 __env_config_filename__ = 'ESKBCLI_CONFIG_FILENAME'
-__search_split_count_default__ = 5
+__search_split_count_default__ = 10
 __search_split_bucket_limit__ = 10000
-__search_default_timeout_seconds__ = 60
+__search_default_timeout_seconds__ = 120
