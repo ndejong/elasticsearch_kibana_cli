@@ -47,6 +47,7 @@ class ElasticsearchKibanaCLISearch:
             )
 
         if splits > 1:
+            logger.debug('Splitting search into {} requests based on "{}" keyword'.format(str(splits), range_keyword))
             payload_data = self.__payload_range_splitter(payload_data, range_keyword=range_keyword)
             logger.info('Search split into {} requests based on "{}" keyword'.format(str(splits), range_keyword))
 
@@ -77,6 +78,8 @@ class ElasticsearchKibanaCLISearch:
             return []
 
         return_list = []
+        hit_min = 9999999999
+        hit_max = 0
         hit_total = 0
 
         for hit_index in range(0, splits):
@@ -88,16 +91,30 @@ class ElasticsearchKibanaCLISearch:
                 pass
             except IndexError:
                 pass
+
             if value is None:
                 value = 0
             elif value > SEARCH_SPLIT_LIMIT:
                 logger.warning('Search split {} has {} hit-results which exceeds the {} limit, '
                                'results truncated!'.format(hit_index, value, SEARCH_SPLIT_LIMIT))
+
+            if value < hit_min:
+                hit_min = value
+            if value > hit_max:
+                hit_max = value
+
             hit_total = hit_total + value
 
-        hit_count = len(return_list)
-        logger.info('{} available-hits; {} returned-hits; {} average-hits-per-split; {} msearch-splits'.
-                    format(hit_total, hit_count, int(hit_total / splits), splits))
+        logger.info('results-available={available_count}; results-returned={returned_count}; '
+                    'min/max/avg result-count-per-split={min_split_count}/{max_split_count}/{avg_split_count}; '
+                    'msearch-splits={split_count}'.format(
+                        available_count=hit_total,
+                        returned_count=len(return_list),
+                        min_split_count=hit_min,
+                        max_split_count=hit_max,
+                        avg_split_count=int(hit_total / splits),
+                        split_count=splits,
+                    ))
 
         if self.connection.internal_proxy:
             time.sleep(0.1)  # allows internal_proxy threads to close-out
