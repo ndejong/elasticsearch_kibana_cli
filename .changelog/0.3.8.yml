@@ -1,0 +1,6 @@
+release_date: '2021-06-30'
+changes:
+- type: fix
+  component: general
+  description: Improved logging message
+  fixes: []
