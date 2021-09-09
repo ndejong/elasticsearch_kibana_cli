@@ -12,7 +12,7 @@ from elasticsearch_kibana_cli.utils.output import output_handler
 from elasticsearch_kibana_cli.ElasticsearchKibanaInterface import ElasticsearchKibanaInterface
 
 
-config_file_default = '~/.eskbcli'
+config_file_default = os.path.expanduser('~/.eskbcli')
 elasticsearch_kibana_interface = None
 
 
