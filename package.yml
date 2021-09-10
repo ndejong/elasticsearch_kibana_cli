@@ -12,8 +12,9 @@ entrypoints:
   console_scripts:
     - eskbcli = elasticsearch_kibana_cli.cli.entrypoints:eskbcli
 
-test-driver:
-  type: pytest
+test-drivers:
+  - type: pytest
+    parallelism: 2
 
 requirements:
   - python ^3.6
