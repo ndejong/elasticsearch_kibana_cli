@@ -4,8 +4,7 @@
 The following development tools are used to help create and manage this project.
 
 ### shut
-[shut](https://pypi.org/project/shut) is a Python package management and release 
-tool - [documentation link](https://github.com/NiklasRosenstein/shut/blob/develop/docs/docs/index.md)
+Shut is a Python package management and release tool - https://shut.readthedocs.io/en/latest/
 ```shell script
 # Update package files
 $ shut pkg update
@@ -32,8 +31,7 @@ $ shut pkg publish warehouse:pypi
 ```
 
 ### pydoc-markdown
-[pydoc-markdown](https://pypi.org/project/pydoc-markdown) is a documentation generation 
-tool that works well with Python modules - [documentation link](https://pydoc-markdown.readthedocs.io/en/latest/)
+pydoc-markdown is a documentation generation tool that works well with Python modules - https://pydoc-markdown.readthedocs.io/en/latest/
 ```shell script
 # Render documentation
 $ pydoc-markdown docs/pydoc-markdown.yml 
