@@ -18,7 +18,7 @@ class ElasticsearchKibanaCLIConfig:
 
     def __init__(self, config_filename=None):
 
-        self.config_filename = config_filename
+        self.config_filename = os.path.expanduser(config_filename)
         logger.debug('loading config_filename: {}'.format(self.config_filename))
 
         if self.config_filename is None or not os.path.isfile(self.config_filename):
