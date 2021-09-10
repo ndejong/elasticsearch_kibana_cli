@@ -50,7 +50,6 @@ and worked examples with description details.
 ## Project
 * Github - [github.com/ndejong/elasticsearch_kibana_cli](https://github.com/ndejong/elasticsearch_kibana_cli)
 * PyPI - [pypi.python.org/pypi/elasticsearch-kibana-cli](https://pypi.python.org/pypi/elasticsearch-kibana-cli/)
-* TravisCI - [travis-ci.org/github/ndejong/elasticsearch_kibana_cli](https://travis-ci.org/github/ndejong/elasticsearch_kibana_cli)
 * ReadTheDocs - [elasticsearch-kibana-cli.readthedocs.io](https://elasticsearch-kibana-cli.readthedocs.io)
 
 ---
