@@ -1,3 +1,9 @@
+## 0.3.9 (2021-09-10)
+
+* __general__
+    * **fix**: Fixes problem in referencing ~/.eskbcli; and issue with including
+      @timestamp as a source: item
+
 ## 0.3.8 (2021-06-30)
 
 * __general__
