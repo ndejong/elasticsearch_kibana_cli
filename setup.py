@@ -30,7 +30,7 @@ requirements = [
 
 setuptools.setup(
   name = 'elasticsearch_kibana_cli',
-  version = '0.3.8',
+  version = '0.3.9',
   author = 'Nicholas de Jong',
   author_email = 'contact@nicholasdejong.com',
   description = 'CLI interface to query Elasticsearch backend via the Kibana frontend.',
