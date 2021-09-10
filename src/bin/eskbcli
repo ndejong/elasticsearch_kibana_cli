@@ -4,6 +4,10 @@ import os
 import re
 import sys
 
+# NB: This file exists for convenience in development by catching the ModuleNotFoundError condition and
+#     appending to the system-path.  This file mimics the automatically generated CLI wrapper that the
+#     package-build process creates, however it is not the actual file installed by the package.
+
 try:
     from elasticsearch_kibana_cli.cli import entrypoints
 except ModuleNotFoundError as e:
