@@ -154,7 +154,7 @@ class ElasticsearchKibanaCLISearch:
         )
 
         payload_values = {
-            'source': json.dumps(source) if source is not None else '[ ]',
+            'source': json.dumps(source).replace('___timestamp', '@timestamp') if source is not None else '[ ]',
             'size': size,
             'aggs': json.dumps(aggs),
             'query': json.dumps(query.to_dict()),
@@ -188,7 +188,7 @@ class ElasticsearchKibanaCLISearch:
         query = []
         for param_query_type, param_queries in query_param.items():
             for param_query_item in param_queries:
-                if param_query_item == '__timestamp':
+                if param_query_item == '___timestamp':
                     timestamp = self.__parse_query_timestamp(param_queries[param_query_item])
                     query.append(Q(param_query_type, **{'@timestamp': timestamp}))
                 elif type(param_query_item) is dict:

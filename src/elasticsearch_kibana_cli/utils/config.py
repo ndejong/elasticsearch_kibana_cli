@@ -31,7 +31,7 @@ class ElasticsearchKibanaCLIConfig:
 
         with open(config_filename, 'r') as f:
             try:
-                loaded_config = yaml.safe_load(f.read().replace('@timestamp', '__timestamp'))
+                loaded_config = yaml.safe_load(f.read().replace('@timestamp', '___timestamp'))
             except yaml.YAMLError as e:
                 raise ElasticsearchKibanaCLIException(e)
 
