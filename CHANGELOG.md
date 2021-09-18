@@ -1,3 +1,8 @@
+## 0.4.1 (2021-09-19)
+
+* __general__
+    * **fix**: Fixes build path problems with newer pydoc-markdown readthedocs
+
 ## 0.4.0 (2021-09-18)
 
 * __general__
