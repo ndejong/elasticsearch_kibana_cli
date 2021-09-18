@@ -29,10 +29,10 @@ user@computer:~$ pip install elasticsearch-kibana-cli
 Documentation is available at https://elasticsearch-kibana-cli.readthedocs.io
 
 ### Usage
-* [search](/docs/usage/search) - Execute the named search configuration.
-* [summary](/docs/usage/summary) - Summary report for search result datafile; use "-" to pipe stdin.
-* [show](/docs/usage/show) - Show the named eskbcli search configuration.
-* [list](/docs/usage/list) - List the available eskbcli search names.
+* [search](docs/usage/search) - Execute the named search configuration.
+* [summary](docs/usage/summary) - Summary report for search result datafile; use "-" to pipe stdin.
+* [show](docs/usage/show) - Show the named eskbcli search configuration.
+* [list](docs/usage/list) - List the available eskbcli search names.
 
 ### Config files
 Refer to the worked example [config files](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/docs/config-file/) 
