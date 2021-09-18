@@ -1,3 +1,8 @@
+## 0.4.0 (2021-09-18)
+
+* __general__
+    * **feature**: Adds summary report feature
+
 ## 0.3.9 (2021-09-10)
 
 * __general__
