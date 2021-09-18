@@ -3,3 +3,4 @@ changes:
   component: general
   description: Fixes build path problems with newer pydoc-markdown readthedocs
   fixes: []
+release_date: '2021-09-19'
