@@ -20,7 +20,7 @@ requirements = [
   'bs4',
   'maya',
   'dpath',
-  'Flask',
+  'Flask >=1.0<=2.0',
   'PyYAML',
   'urllib3',
   'chardet',
