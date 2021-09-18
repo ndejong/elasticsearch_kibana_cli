@@ -1,10 +1,10 @@
 # Elasticsearch Kibana CLI
 
 ## Usage
-* [search](docs/usage/search) - Execute the named search configuration.
-* [summary](docs/usage/summary) - Summary report for search result datafile; use "-" to pipe stdin.
-* [show](docs/usage/show) - Show the named eskbcli search configuration.
-* [list](docs/usage/list) - List the available eskbcli search names.
+* [search](search) - Execute the named search configuration.
+* [summary](summary) - Summary report for search result datafile; use "-" to pipe stdin.
+* [show](show) - Show the named eskbcli search configuration.
+* [list](list) - List the available eskbcli search names.
 
 ```shell
 Usage: eskbcli [OPTIONS] COMMAND [ARGS]...
