@@ -18,11 +18,11 @@ test-drivers:
 
 requirements:
   - python ^3.6
-  - click >=7.1
+  - click >=7.1,<=7.999.999
   - bs4
   - maya
   - dpath
-  - Flask >=1.0,<=1.9999.9999
+  - Flask >=1.0,<=1.999.999
   - PyYAML
   - urllib3
   - chardet
