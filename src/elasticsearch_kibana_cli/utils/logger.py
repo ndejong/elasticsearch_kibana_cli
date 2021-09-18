@@ -17,7 +17,7 @@ class Logger:
         self.name = name
         self.logging = logging.getLogger(self.name)
 
-    def setup(self, level=None, fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y%m%dZ%H%M%S'):
+    def setup(self, level=None, fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%dT%H:%M:%S%z'):
 
         logger_init = logging.getLogger(self.name)
         stream_handler = logging.StreamHandler()
@@ -45,7 +45,7 @@ class Logger:
         else:
             raise LoggerException('unknown logger level value', log_level)
 
-        logging.Formatter.converter = time.gmtime
+        logging.Formatter.converter = time.localtime
         stream_handler.setFormatter(LoggerColorFormatter(fmt=fmt, datefmt=datefmt))
         logger_init.addHandler(stream_handler)
 
