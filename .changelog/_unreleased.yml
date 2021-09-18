@@ -1,0 +1,5 @@
+changes:
+- type: fix
+  component: general
+  description: Fixes build path problems with newer pydoc-markdown readthedocs
+  fixes: []

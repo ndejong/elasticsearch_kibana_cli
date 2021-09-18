@@ -16,11 +16,11 @@ else:
   long_description = None
 
 requirements = [
-  'click >=7.1,<=7.999.999',
+  'click',
   'bs4',
   'maya',
   'dpath',
-  'Flask >=1.0,<=1.999.999',
+  'Flask',
   'PyYAML',
   'urllib3',
   'chardet',
