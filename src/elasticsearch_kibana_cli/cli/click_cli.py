@@ -43,41 +43,84 @@ def eskbcli_interface(config, verbose, quiet):
     """
 
     if quiet:
-        logger = Logger(name=NAME).setup(level='CRITICAL')
+        Logger(name=NAME).setup(level='CRITICAL')
     elif verbose:
-        logger = Logger(name=NAME).setup(level='DEBUG')
+        Logger(name=NAME).setup(level='DEBUG')
     else:
-        logger = Logger(name=NAME).setup(level='INFO')
+        Logger(name=NAME).setup(level='INFO')
 
     if config is not None:
         config_filename = config
-        logger.debug('config_filename taken from cli arg: {}'.format(config_filename))
     else:
         if os.getenv(ENV_CONFIG_FILENAME):
             config_filename = os.getenv(ENV_CONFIG_FILENAME)
-            logger.debug('config_filename taken from env value: {}'.format(config_filename))
         else:
             config_filename = config_file_default
-            logger.debug('config_filename using default: {}'.format(config_filename))
 
     global elasticsearch_kibana_interface
     elasticsearch_kibana_interface = ElasticsearchKibanaInterface(config_filename=config_filename)
 
 
-@eskbcli_interface.command('list')
-@click.option('-o', '--out', help='Filename to write data output.', required=False)
-def list_searches(**kwargs):
+@eskbcli_interface.command('search')
+@click.option('-o', '--out',
+              help='Filename to write output.',
+              required=False, default='stdout', show_default=True)
+@click.option('-S', '--summary',
+              help='Generate summary report and output to stderr',
+              is_flag=True, required=False, default=False, show_default=True)
+@click.option('-s', '--splits',
+              help='Number of splits to break search into.',
+              required=False, type=int, default=SEARCH_SPLIT_COUNT_DEFAULT, show_default=True)
+@click.option('-np', '--no-ping',
+              help='Do not ping the Kibana endpoint before using the connection.',
+              is_flag=True, required=False, default=False, show_default=True)
+@click.argument('search_name', required=True)
+def perform_search(**kwargs):
     """
-    List the available eskbcli search names.
+    Execute the named search configuration.
+    """
+    data = elasticsearch_kibana_interface.perform_search(
+        name=kwargs['search_name'],
+        split_count=kwargs['splits'],
+        ping_connection=False if kwargs['no_ping'] is True else True
+    )
+
+    output_handler(
+        data=data,
+        filename=kwargs['out'],
+        compact=False if kwargs['out'] == 'stdout' else True
+    )
+
+    if 'summary' in kwargs.keys() and kwargs['summary'] is True:
+        output_handler(
+            data=elasticsearch_kibana_interface.generate_summary(data=data),
+            filename='stderr',
+            compact=False
+        )
+
+
+@eskbcli_interface.command('summary')
+@click.option('-o', '--out',
+              help='Filename to write output.',
+              required=False, default='stdout', show_default=True)
+@click.argument('filename', required=True)
+def generate_summary(**kwargs):
+    """
+    Summary report for search result datafile; use "-" to pipe stdin.
     """
     output_handler(
-        data=elasticsearch_kibana_interface.list_searches(),
-        filename=kwargs['out'], compact=False if kwargs['out'] is None else True
+        data=elasticsearch_kibana_interface.generate_summary(
+            filename=kwargs['filename']
+        ),
+        filename=kwargs['out'],
+        compact=False if kwargs['out'] == 'stdout' else True
     )
 
 
 @eskbcli_interface.command('show')
-@click.option('-o', '--out', help='Filename to write data output.', required=False)
+@click.option('-o', '--out',
+              help='Filename to write output.',
+              required=False, default='stdout', show_default=True)
 @click.argument('search_name', required=True)
 def show_search(**kwargs):
     """
@@ -85,27 +128,23 @@ def show_search(**kwargs):
     """
     output_handler(
         data=elasticsearch_kibana_interface.show_search(name=kwargs['search_name']),
-        filename=kwargs['out'], compact=False if kwargs['out'] is None else True
+        filename=kwargs['out'],
+        compact=False if kwargs['out'] == 'stdout' else True,
+        replacements=[('___timestamp', '@timestamp')]
     )
 
 
-@eskbcli_interface.command('search')
-@click.option('-o', '--out', help='Filename to write data output.', required=False)
-@click.option('-s', '--splits', help='Number of splits to break the search into (default:{})'
-              .format(SEARCH_SPLIT_COUNT_DEFAULT), required=False)
-@click.option('-np', '--no-ping', help='Do not ping the Kibana endpoint before using the connection (default: False)',
-              is_flag=True, required=False, default=False)
-@click.argument('search_name', required=True)
-def perform_search(**kwargs):
+@eskbcli_interface.command('list')
+@click.option('-o', '--out',
+              help='Filename to write output.',
+              required=False, default='stdout', show_default=True)
+def list_searches(**kwargs):
     """
-    Execute the named search configuration.
+    List the available eskbcli search names.
     """
     output_handler(
-        data=elasticsearch_kibana_interface.perform_search(
-            name=kwargs['search_name'],
-            split_count=kwargs['splits'],
-            ping_connection=False if kwargs['no_ping'] is True else True
-        ),
+        data=elasticsearch_kibana_interface.list_searches(),
         filename=kwargs['out'],
-        compact=False if kwargs['out'] is None else True
+        compact=False if kwargs['out'] == 'stdout' else True,
     )
+

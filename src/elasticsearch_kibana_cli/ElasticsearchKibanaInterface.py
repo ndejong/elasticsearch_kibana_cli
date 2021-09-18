@@ -1,3 +1,6 @@
+import json
+import os
+import sys
 
 from elasticsearch_kibana_cli import __title__ as NAME
 from elasticsearch_kibana_cli import __version__ as VERSION
@@ -8,6 +11,7 @@ from elasticsearch_kibana_cli.utils.logger import Logger
 from elasticsearch_kibana_cli.utils.config import ElasticsearchKibanaCLIConfig
 from elasticsearch_kibana_cli.utils.connection import ElasticsearchKibanaCLIConnection
 from elasticsearch_kibana_cli.utils.search import ElasticsearchKibanaCLISearch
+from elasticsearch_kibana_cli.utils.summary import ElasticsearchKibanaCLISummary
 from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
 
 
@@ -17,16 +21,17 @@ logger = Logger(name=NAME).logging
 class ElasticsearchKibanaInterface:
 
     config = None
+    config_filename = None
     search = None
     connection = None
 
-    def __init__(self, config_filename):
+    def __init__(self, config_filename=None):
         logger.info('{} v{}'.format(CLI_NAME, VERSION))
-
-        self.config = ElasticsearchKibanaCLIConfig(config_filename=config_filename).config
-        logger.info('Loaded configuration filename {}'.format(config_filename))
+        self.config_filename = config_filename
 
     def list_searches(self):
+        if self.config is None:
+            self.config = self.read_config(self.config_filename)
         data = []
         if 'search_definitions' not in self.config:
             raise ElasticsearchKibanaCLIException('Configuration does not provide a "search_definitions" section.')
@@ -36,6 +41,8 @@ class ElasticsearchKibanaInterface:
             return data
 
     def show_search(self, name):
+        if self.config is None:
+            self.config = self.read_config(self.config_filename)
         if name not in self.list_searches():
             raise ElasticsearchKibanaCLIException('Configuration does not provide "search_definitions" '
                                                   'section with name "{}"'.format(name))
@@ -43,7 +50,8 @@ class ElasticsearchKibanaInterface:
             return self.config['search_definitions'][name]
 
     def perform_search(self, name, split_count=None, ping_connection=True):
-
+        if self.config is None:
+            self.config = self.read_config(self.config_filename)
         search_config = self.show_search(name)
 
         if split_count is not None:
@@ -53,6 +61,33 @@ class ElasticsearchKibanaInterface:
 
         self.kibana_connect(ping_connection=ping_connection)
         return self.search.msearch(**search_config)
+
+    def generate_summary(self, filename=None, data=None):
+
+        if filename:
+            filename = os.path.expanduser(filename)
+
+            if filename == '-':
+                logger.debug('Reading input from stdin')
+                rawdata = sys.stdin.read()
+            elif os.path.isfile(filename):
+                logger.debug('Reading input from {}'.format(filename))
+                with open(filename, 'r') as f:
+                    rawdata = f.read()
+            else:
+                raise ElasticsearchKibanaCLIException('Unable to locate input file', filename)
+
+            try:
+                data = json.loads(rawdata)
+            except json.decoder.JSONDecodeError as e:
+                raise ElasticsearchKibanaCLIException('JSON data decode error. ' + str(e))
+
+        return ElasticsearchKibanaCLISummary().summary(data)
+
+    def read_config(self, config_filename):
+        config = ElasticsearchKibanaCLIConfig(config_filename=config_filename).config
+        logger.info('Loaded configuration filename {}'.format(config_filename))
+        return config
 
     def kibana_connect(self, ping_connection=True, kbn_version=None):
 
