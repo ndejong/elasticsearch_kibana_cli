@@ -68,9 +68,12 @@ def eskbcli_interface(config, verbose, quiet):
 @click.option('-S', '--summary',
               help='Generate summary report and output to stderr',
               is_flag=True, required=False, default=False, show_default=True)
+@click.option('-ST', '--summary-top',
+              help='Depth of the top-count summary to produce.',
+              required=False, default=3, show_default=True)
 @click.option('-s', '--splits',
-              help='Number of splits to break search into.',
-              required=False, type=int, default=SEARCH_SPLIT_COUNT_DEFAULT, show_default=True)
+              help='Number of splits to break search into.  [default: {}]'.format(SEARCH_SPLIT_COUNT_DEFAULT),
+              required=False, type=int, default=None, show_default=False)  # NB: manually express default value
 @click.option('-np', '--no-ping',
               help='Do not ping the Kibana endpoint before using the connection.',
               is_flag=True, required=False, default=False, show_default=True)
@@ -93,13 +96,16 @@ def perform_search(**kwargs):
 
     if 'summary' in kwargs.keys() and kwargs['summary'] is True:
         output_handler(
-            data=elasticsearch_kibana_interface.generate_summary(data=data),
+            data=elasticsearch_kibana_interface.generate_summary(data=data, top_count=kwargs['summary_top']),
             filename='stderr',
             compact=False
         )
 
 
 @eskbcli_interface.command('summary')
+@click.option('-t', '--top',
+              help='Depth of the top-count summary to produce.',
+              required=False, default=3, show_default=True)
 @click.option('-o', '--out',
               help='Filename to write output.',
               required=False, default='stdout', show_default=True)
@@ -110,7 +116,8 @@ def generate_summary(**kwargs):
     """
     output_handler(
         data=elasticsearch_kibana_interface.generate_summary(
-            filename=kwargs['filename']
+            filename=kwargs['filename'],
+            top_count=kwargs['top'],
         ),
         filename=kwargs['out'],
         compact=False if kwargs['out'] == 'stdout' else True

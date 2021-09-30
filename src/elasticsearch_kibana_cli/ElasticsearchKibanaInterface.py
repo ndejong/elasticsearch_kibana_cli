@@ -62,7 +62,7 @@ class ElasticsearchKibanaInterface:
         self.kibana_connect(ping_connection=ping_connection)
         return self.search.msearch(**search_config)
 
-    def generate_summary(self, filename=None, data=None):
+    def generate_summary(self, filename=None, data=None, top_count=3):
 
         if filename:
             filename = os.path.expanduser(filename)
@@ -82,7 +82,7 @@ class ElasticsearchKibanaInterface:
             except json.decoder.JSONDecodeError as e:
                 raise ElasticsearchKibanaCLIException('JSON data decode error. ' + str(e))
 
-        return ElasticsearchKibanaCLISummary().summary(data)
+        return ElasticsearchKibanaCLISummary().summary(data=data, top_count=top_count)
 
     def read_config(self, config_filename):
         config = ElasticsearchKibanaCLIConfig(config_filename=config_filename).config
