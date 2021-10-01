@@ -20,10 +20,11 @@ access to Kibana in situations that require complex user-authentication
 such as when Kibana exists behind an OAuth reverse proxy or other session-
 based authentication arrangement.
 
-## Installation
+## Install / Upgrade
 ```shell
-user@computer:~$ pip install elasticsearch-kibana-cli
+user@computer:~$ pip install [--upgrade] elasticsearch-kibana-cli
 ```
+
 
 ## Documentation
 Documentation is available at https://elasticsearch-kibana-cli.readthedocs.io

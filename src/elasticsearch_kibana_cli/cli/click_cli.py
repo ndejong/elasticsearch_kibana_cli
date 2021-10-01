@@ -6,6 +6,7 @@ from elasticsearch_kibana_cli import __title__ as NAME
 from elasticsearch_kibana_cli import __version__ as VERSION
 from elasticsearch_kibana_cli import __env_config_filename__ as ENV_CONFIG_FILENAME
 from elasticsearch_kibana_cli import __search_split_count_default__ as SEARCH_SPLIT_COUNT_DEFAULT
+from elasticsearch_kibana_cli import __summary_top_count_default__ as SUMMARY_TOP_COUNT_DEFAULT
 
 from elasticsearch_kibana_cli.utils.logger import Logger
 from elasticsearch_kibana_cli.utils.output import output_handler
@@ -66,18 +67,18 @@ def eskbcli_interface(config, verbose, quiet):
               help='Filename to write output.',
               required=False, default='stdout', show_default=True)
 @click.option('-S', '--summary',
-              help='Generate summary report and output to stderr',
+              help='Generate summary report and output to stderr with the default summary-top count.',
               is_flag=True, required=False, default=False, show_default=True)
 @click.option('-ST', '--summary-top',
-              help='Depth of the top-count summary to produce.',
-              required=False, default=3, show_default=True)
+              help='Depth of the top-count summary to produce.  [default: {}]'.format(SUMMARY_TOP_COUNT_DEFAULT),
+              required=False, type=int, default=None, show_default=False)
 @click.option('-s', '--splits',
               help='Number of splits to break search into.  [default: {}]'.format(SEARCH_SPLIT_COUNT_DEFAULT),
               required=False, type=int, default=None, show_default=False)  # NB: manually express default value
 @click.option('-np', '--no-ping',
               help='Do not ping the Kibana endpoint before using the connection.',
               is_flag=True, required=False, default=False, show_default=True)
-@click.argument('search_name', required=True)
+@click.argument('search_name', required=False)
 def perform_search(**kwargs):
     """
     Execute the named search configuration.
@@ -94,7 +95,8 @@ def perform_search(**kwargs):
         compact=False if kwargs['out'] == 'stdout' else True
     )
 
-    if 'summary' in kwargs.keys() and kwargs['summary'] is True:
+    if ('summary' in kwargs.keys() and kwargs['summary'] is True) or \
+            ('summary_top' in kwargs.keys() and kwargs['summary_top'] is not None):
         output_handler(
             data=elasticsearch_kibana_interface.generate_summary(data=data, top_count=kwargs['summary_top']),
             filename='stderr',
@@ -105,7 +107,7 @@ def perform_search(**kwargs):
 @eskbcli_interface.command('summary')
 @click.option('-t', '--top',
               help='Depth of the top-count summary to produce.',
-              required=False, default=3, show_default=True)
+              required=False, default=SUMMARY_TOP_COUNT_DEFAULT, show_default=True)
 @click.option('-o', '--out',
               help='Filename to write output.',
               required=False, default='stdout', show_default=True)
@@ -128,7 +130,7 @@ def generate_summary(**kwargs):
 @click.option('-o', '--out',
               help='Filename to write output.',
               required=False, default='stdout', show_default=True)
-@click.argument('search_name', required=True)
+@click.argument('search_name', required=False)
 def show_search(**kwargs):
     """
     Show the named eskbcli search configuration.
@@ -154,4 +156,3 @@ def list_searches(**kwargs):
         filename=kwargs['out'],
         compact=False if kwargs['out'] == 'stdout' else True,
     )
-

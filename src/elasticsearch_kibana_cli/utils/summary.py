@@ -3,6 +3,7 @@ from collections.abc import MutableMapping
 
 from elasticsearch_kibana_cli import __title__ as NAME
 from elasticsearch_kibana_cli.utils.logger import Logger
+from elasticsearch_kibana_cli import __summary_top_count_default__ as SUMMARY_TOP_COUNT_DEFAULT
 
 
 logger = Logger(name=NAME).logging
@@ -13,7 +14,10 @@ class ElasticsearchKibanaCLISummary:
     def __init__(self):
         pass
 
-    def summary(self, data, data_key='_source', top_count=3):
+    def summary(self, data, data_key='_source', top_count=None):
+
+        if top_count is None:
+            top_count = SUMMARY_TOP_COUNT_DEFAULT
 
         summary_data = {}
 

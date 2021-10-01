@@ -7,18 +7,28 @@ Usage: eskbcli summary [OPTIONS] FILENAME
   Summary report for search result datafile; use "-" to pipe stdin.
 
 Options:
-  -o, --out TEXT  Filename to write output.  [default: stdout]
-  --help          Show this message and exit.
+  -t, --top INTEGER  Depth of the top-count summary to produce.  [default: 3]
+  -o, --out TEXT     Filename to write output.  [default: stdout]
+  --help             Show this message and exit.
 ```
 
 ### Example #1 - read file
-Create a summary report on a previous `search` output file at `/tmp/outputfile.json`
+Create a summary report to `stdout` on a previous `search` search output-datafile at 
+`/tmp/outputfile.json`
 ```shell
 eskbcli summary /tmp/outputfile.json
 ```
 
 ### Example #2 - pipe input
-Create a summary report on a search-datafile `/tmp/outputfile.json` piped in via `cat`.
+Create a summary report to `stdout` on a search output-datafile `/tmp/outputfile.json` 
+piped in via `stdin` using the `cat` command.
 ```shell
 cat /tmp/outputfile.json | eskbcli summary - 
+```
+
+### Example #3 - extended summary report depth
+Create a summary report to `stdout` showing the `--top` 12x results on a previous 
+search output-datafile `/tmp/outputfile.json`
+```shell
+eskbcli summary -t 12 /tmp/outputfile.json
 ```

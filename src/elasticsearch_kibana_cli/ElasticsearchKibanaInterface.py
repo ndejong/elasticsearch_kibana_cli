@@ -43,15 +43,27 @@ class ElasticsearchKibanaInterface:
     def show_search(self, name):
         if self.config is None:
             self.config = self.read_config(self.config_filename)
-        if name not in self.list_searches():
-            raise ElasticsearchKibanaCLIException('Configuration does not provide "search_definitions" '
-                                                  'section with name "{}"'.format(name))
-        else:
-            return self.config['search_definitions'][name]
 
-    def perform_search(self, name, split_count=None, ping_connection=True):
+        if name is None:
+            names = self.list_searches()
+            if len(names) < 1:
+                raise ElasticsearchKibanaCLIException('No named "search_definitions" found in configuration file.')
+            elif len(names) > 1:
+                raise ElasticsearchKibanaCLIException('Search name not provided and more than one "search_definitions" '
+                                                      'name exists in the configuration file.  Unable to determine '
+                                                      'which search name to use.')
+            name = names[0]
+            logger.debug('Found a single "search_definitions" name in configuration file: {}'.format(name))
+
+        if name not in self.list_searches():
+            raise ElasticsearchKibanaCLIException('Configuration does not provide "search_definitions" section with '
+                                                  'name "{}"'.format(name))
+        return self.config['search_definitions'][name]
+
+    def perform_search(self, name=None, split_count=None, ping_connection=True):
         if self.config is None:
             self.config = self.read_config(self.config_filename)
+
         search_config = self.show_search(name)
 
         if split_count is not None:

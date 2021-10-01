@@ -18,9 +18,16 @@ default `~/.eskbcli` configuration file
 eskbcli show example01-query-string
 ```
 
-### Example #2 - config file
+### Example #2 - config file with named search definition
 Read the `--config` file located at `~/project/eskbcli-foobar.yml` and show
 the search definition for `example01-query-string`
 ```shell
-eskbcli -c ~/project/eskbcli-foobar.yml search example01-query-string
+eskbcli -c ~/project/eskbcli-foobar.yml show example01-query-string
+```
+
+### Example #3 - config file with single search definition
+Read the `--config` file located at `~/project/eskbcli-foobar.yml` and show
+the only search definition within the configuration.
+```shell
+eskbcli -c ~/project/eskbcli-foobar.yml show
 ```

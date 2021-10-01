@@ -10,4 +10,5 @@ __cli_name__ = 'eskbcli'
 __env_config_filename__ = 'ESKBCLI_CONFIG_FILENAME'
 __search_split_count_default__ = 10
 __search_split_bucket_limit__ = 10000
+__summary_top_count_default__ = 3
 __search_default_timeout_seconds__ = 120
