@@ -1,0 +1,6 @@
+changes:
+- type: fix
+  component: general
+  description: Fixes bug when creating a summary report with keys that are lists
+  fixes: []
+release_date: '2021-10-13'

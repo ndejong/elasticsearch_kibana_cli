@@ -25,6 +25,8 @@ class ElasticsearchKibanaCLISummary:
             if type(record) is dict and data_key in record.keys():
                 flat_record = self.flatten_dict(record['_source'])
                 for record_key, record_value in flat_record.items():
+                    if type(record_value) not in (str, int, float):
+                        record_value = str(record_value)
                     if record_key not in summary_data.keys():
                         summary_data[record_key] = {}
                     if record_value not in summary_data[record_key].keys():
