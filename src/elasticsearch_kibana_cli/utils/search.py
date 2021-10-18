@@ -49,7 +49,11 @@ class ElasticsearchKibanaCLISearch:
         if splits > 1:
             logger.debug('Splitting search into {} requests based on "{}" keyword'.format(str(splits), range_keyword))
             payload_data = self.__payload_range_splitter(payload_data, range_keyword=range_keyword)
-            logger.info('Search split into {} requests based on "{}" keyword'.format(str(splits), range_keyword))
+            logger.info('Search split into {} msearch requests using "{}" keyword with a query payload of {} bytes'.
+                        format(str(splits), range_keyword, len(payload_data)))
+        else:
+            logger.info('Search delivered in single non-split msearch with query payload of {} bytes'.
+                        format(len(payload_data)))
 
         request_headers = {
             'content-type': 'application/x-ndjson',
