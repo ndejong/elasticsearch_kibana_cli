@@ -1,0 +1,5 @@
+[[entries]]
+id = "5d84dad2-c413-4729-9cc7-0ed708bc08f6"
+type = "refactor"
+description = "Migrate from shut-cli to slap-cli"
+author = "@ndejong"

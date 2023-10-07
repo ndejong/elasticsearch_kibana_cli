@@ -1,0 +1,7 @@
+release-date = "2021-09-10"
+
+[[entries]]
+id = "2e3e193e-f8e6-4515-b7d3-b1033b8717f5"
+type = "fix"
+description = "Fixes problem in referencing ~/.eskbcli; and issue with including @timestamp as a source: item"
+author = "@ndejong"

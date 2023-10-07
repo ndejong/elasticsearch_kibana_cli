@@ -1,0 +1,7 @@
+release-date = "2021-06-04"
+
+[[entries]]
+id = "f2184f54-e37b-47e4-8301-00a24e238cd8"
+type = "fix"
+description = "Handle non success response status_code values"
+author = "@ndejong"

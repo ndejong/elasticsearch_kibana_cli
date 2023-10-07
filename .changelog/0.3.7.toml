@@ -1,0 +1,7 @@
+release-date = "2021-06-05"
+
+[[entries]]
+id = "689d9a47-4d9c-4d2d-ab9c-916d5a2604e9"
+type = "fix"
+description = "Include click requirement version >=7.1 in package spec"
+author = "@ndejong"

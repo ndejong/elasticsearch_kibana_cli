@@ -1,0 +1,7 @@
+release-date = "2021-09-18"
+
+[[entries]]
+id = "532d2985-58cd-4ec7-b4a0-6780c0f37e39"
+type = "feature"
+description = "Adds summary report feature"
+author = "@ndejong"

@@ -1,0 +1,24 @@
+
+docs_dir: content
+site_name: "Elasticsearch Kibana CLI (eskbcli)"
+
+nav:
+  - Home: index.md
+
+  - Usage:
+    - usage/index.md
+    - Search: usage/search.md
+    - Summary: usage/summary.md
+    - Show: usage/show.md
+    - List: usage/list.md
+
+  - Config Files:
+    - config/index.md
+    - Example 01: config/example01.md
+    - Example 02: config/example02.md
+
+  - Other:
+    - Project Details: project.md
+    - Development: development.md
+    - License: license.md
+    - Changelog: changelog.md

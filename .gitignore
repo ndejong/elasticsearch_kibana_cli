@@ -1,8 +1,24 @@
-.venv*/
-dist/
-build/
-*.py[cod]
-*.egg-info
-*.egg
+# Created by .ignore support plugin (hsz.mobi)
 
-.idea/
+# JetBrains
+.idea
+
+# Python template
+__pycache__/
+*.py[cod]
+
+# Distribution / packaging
+build/
+
+# Environments
+.env
+.venv
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Custom
+dev/
+docs/_site

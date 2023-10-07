@@ -1,0 +1,7 @@
+release-date = "2021-09-19"
+
+[[entries]]
+id = "6e30e257-b1f9-4331-863a-1788273d15ba"
+type = "fix"
+description = "Fixes build path problems with newer pydoc-markdown readthedocs"
+author = "@ndejong"

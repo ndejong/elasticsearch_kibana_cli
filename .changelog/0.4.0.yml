@@ -1,6 +1,0 @@
-changes:
-- type: feature
-  component: general
-  description: Adds summary report feature
-  fixes: []
-release_date: '2021-09-18'

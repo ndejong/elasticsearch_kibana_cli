@@ -1,7 +1,0 @@
-changes:
-- type: feature
-  component: general
-  description: Allows search/show actions to be usable without naming the search definition
-    when there is only one serach defined in the configuration file
-  fixes: []
-release_date: '2021-10-01'

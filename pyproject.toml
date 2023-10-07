@@ -1,0 +1,89 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "elasticsearch_kibana_cli"
+version = "0.6.1"
+description = "CLI interface to query Elasticsearch backend via the Kibana frontend."
+authors = [ "Nicholas de Jong <contact@nicholasdejong.com>" ]
+license = "BSD-2-Clause"
+readme = "README.md"
+packages = [ { include = "elasticsearch_kibana_cli", from = "src" } ]
+classifiers = [
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: BSD License",
+]
+keywords = [ "kibana", "elasticsearch", "elasticsearch-client" ]
+
+[tool.poetry.urls]
+Homepage = "https://github.com/ndejong/elasticsearch_kibana_cli"
+Repository = "https://github.com/ndejong/elasticsearch_kibana_cli"
+Documentation = "https://elasticsearch-kibana-cli.readthedocs.io/en/latest/"
+"Bug Tracker" = "https://github.com/ndejong/elasticsearch_kibana_cli/issues"
+
+[tool.poetry.scripts]
+eskbcli = "elasticsearch_kibana_cli.cli.entrypoints:eskbcli"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+click = "~8.1"                      # https://pypi.org/project/click/#history
+beautifulsoup4 = "~4.12"            # https://pypi.org/project/beautifulsoup4/#history
+maya = "~0.6"                       # https://pypi.org/project/maya/#history
+dpath = "~2.0"                      # https://pypi.org/project/dpath/#history
+Flask = "~2.3"                      # https://pypi.org/project/Flask/#history
+PyYAML = "~6.0"                     # https://pypi.org/project/PyYAML/#history
+urllib3 = "~1.26"                   # https://pypi.org/project/urllib3/#history
+chardet = "~5.2"                    # https://pypi.org/project/chardet/#history
+requests = "~2.31"                  # https://pypi.org/project/requests/#history
+elasticsearch-dsl = "~7.4"          # https://pypi.org/project/elasticsearch-dsl/#history
+
+[tool.poetry.dev-dependencies]
+black = "~23.9"                     # https://pypi.org/project/black/#history
+flake8 = "~6.1"                     # https://pypi.org/project/flake8/#history
+isort = "~5.12"                     # https://pypi.org/project/isort/#history
+pycln = "^2.2"                      # https://pypi.org/project/pycln/#history
+pytest = "~7.4"                     # https://pypi.org/project/pytest/#history
+safety = "~2.4.b"                   # https://pypi.org/project/safety/#history
+types-PyYAML = "~6.0"               # https://pypi.org/project/types-PyYAML/#history
+mkdocs = "^1.5"                     # https://pypi.org/project/mkdocs/#history
+# NB: pip installs in .readthedocs.yml need to be kept up-to-date manually
+novella = "^0.2"                    # https://pypi.org/project/novella/#history
+pydoc-markdown = "^4.8"             # https://pypi.org/project/pydoc-markdown/#history
+mkdocs-material = "^9.4"            # https://pypi.org/project/mkdocs-material/#history
+
+[tool.poetry.plugins."slap.plugins.check"]
+changelog = "slap.ext.checks.changelog:ChangelogValidationCheckPlugin"
+general = "slap.ext.checks.general:GeneralChecksPlugin"
+poetry = "slap.ext.checks.poetry:PoetryChecksPlugin"
+release = "slap.ext.checks.release:ReleaseChecksPlugin"
+
+[tool.poetry.plugins."slap.plugins.release"]
+changelog_release = "slap.ext.release.changelog:ChangelogReleasePlugin"
+
+[tool.slap]
+typed = false
+release.branch = "dev"
+
+[tool.slap.test]
+black = "black --check src/ tests/"
+check = "slap check --show-skipped"
+flake8 = "flake8 src/ tests/"
+isort = "isort --check-only src/ tests/"
+pycln  = "pycln src/ tests/ --check --diff || true"
+pytest = "pytest -vv tests/"
+safety = "pip freeze | safety check --stdin --short-report --output text"
+
+[tool.slap.run]
+format = "black src/ tests/ && isort src/ tests/"
+docs-build = "cd docs && novella --base-url elasticsearch-kibana-cli/"
+docs-server = "cd docs && novella --serve"
+
+[tool.isort]
+profile = "black"
+line_length = 120
+combine_as_imports = true
+
+[tool.black]
+line-length = 120

@@ -1,0 +1,7 @@
+release-date = "2021-06-02"
+
+[[entries]]
+id = "67c2f89e-50d3-4be2-a5ce-ddacada50358"
+type = "fix"
+description = "Improved handling of response_data in error conditions"
+author = "@ndejong"

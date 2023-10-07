@@ -1,0 +1,7 @@
+release-date = "2021-04-05"
+
+[[entries]]
+id = "991d820c-5ec1-4b69-9fdc-39f1807d5c92"
+type = "fix"
+description = "Updates supported Python versions"
+author = "@ndejong"

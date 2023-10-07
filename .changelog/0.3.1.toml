@@ -1,0 +1,7 @@
+release-date = "2021-04-04"
+
+[[entries]]
+id = "1b4ef6b6-45e6-4d67-ba84-ee2e65c7e689"
+type = "feature"
+description = "Adds better documentation via readthedocs"
+author = "@ndejong"

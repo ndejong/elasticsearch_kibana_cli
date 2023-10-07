@@ -1,0 +1,7 @@
+release-date = "2021-05-19"
+
+[[entries]]
+id = "523e4342-6ea9-473b-b4f4-fb07b456d99b"
+type = "fix"
+description = "Fixes to support earlier Kibana versions, tested to 6.3.x"
+author = "@ndejong"

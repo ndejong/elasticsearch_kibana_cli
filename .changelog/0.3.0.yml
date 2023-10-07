@@ -1,6 +1,0 @@
-release_date: '2021-04-03'
-changes:
-- type: feature
-  component: general
-  description: Migrate to click-cli based structure, input arg changes
-  fixes: []

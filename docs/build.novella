@@ -1,0 +1,16 @@
+
+template "mkdocs" {
+    content_directory = "content"
+}
+
+action "mkdocs-update-config" {
+    site_name = "Elasticsearch Kibana CLI (eskbcli)"
+    update '$.theme.features' add: ['navigation.sections']
+    update '$.theme.palette' add: {'scheme': 'default', 'primary': 'blue'}
+    update '$.theme.icon' add: {'logo': 'material/file-search'}
+    update '$.theme' add: {'favicon': 'static/icon.png'}
+}
+
+action "preprocess-markdown" {
+    use "pydoc"
+}

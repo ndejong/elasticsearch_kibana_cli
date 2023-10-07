@@ -1,0 +1,13 @@
+release-date = "2021-10-01"
+
+[[entries]]
+id = "f873a474-4350-4237-802c-66702cccec3f"
+type = "fix"
+description = "Fixes bug with splits-default value"
+author = "@ndejong"
+
+[[entries]]
+id = "c81d353e-89a6-467a-8a33-58cb749f9186"
+type = "feature"
+description = "Adds feature to specify the depth of top-count summary data"
+author = "@ndejong"

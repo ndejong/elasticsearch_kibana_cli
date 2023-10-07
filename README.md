@@ -1,9 +1,15 @@
 # Elasticsearch Kibana CLI (eskbcli)
 [![PyPi](https://img.shields.io/pypi/v/elasticsearch-kibana-cli.svg)](https://pypi.python.org/pypi/elasticsearch-kibana-cli/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/elasticsearch-kibana-cli.svg)](https://github.com/ndejong/elasticsearch_kibana_cli/)
-[![Build Status](https://github.com/ndejong/elasticsearch_kibana_cli/actions/workflows/build-tests.yml/badge.svg)](https://github.com/ndejong/elasticsearch_kibana_cli/actions/workflows/build-tests.yml)
 [![Read the Docs](https://img.shields.io/readthedocs/elasticsearch-kibana-cli)](https://elasticsearch-kibana-cli.readthedocs.io)
 ![License](https://img.shields.io/github/license/ndejong/elasticsearch_kibana_cli.svg)
+
+!!! danger
+    ElasticSearch Kibana CLI relies on the availability of a
+    `/elasticsearch/_msearch` API endpoint exposed through Kibana.
+    Recent versions (v8.??) of Kibana appear to have removed this API 
+    endpoint rendering this utility no longer functional.
+    C'est la vie, `eskbcli` has served well but no longer.
 
 ElasticSearch Kibana CLI (`eskbcli`) provides a shell interface to query
 an ElasticSearch backend via the Kibana frontend which is useful in
@@ -27,16 +33,16 @@ user@computer:~$ pip install [--upgrade] elasticsearch-kibana-cli
 
 
 ## Documentation
-Documentation is available at https://elasticsearch-kibana-cli.readthedocs.io
+Documentation is available at [elasticsearch-kibana-cli.readthedocs.io](https://elasticsearch-kibana-cli.readthedocs.io)
 
 ### Usage
-* [search](docs/usage/search) - Execute the named search configuration.
-* [summary](docs/usage/summary) - Summary report for search result datafile; use "-" to pipe stdin.
-* [show](docs/usage/show) - Show the named eskbcli search configuration.
-* [list](docs/usage/list) - List the available eskbcli search names.
+* [Search](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/usage/search) - Execute the named search configuration.
+* [Summary](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/usage/summary) - Summary report for search result datafile; use "-" to pipe stdin.
+* [Show](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/usage/show) - Show the named eskbcli search configuration.
+* [List](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/usage/list) - List the available eskbcli search names.
 
-### Config files
-Refer to the worked example [config files](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/docs/config-file/) 
+### Config Files
+Refer to the worked example [config files](https://elasticsearch-kibana-cli.readthedocs.io/en/latest/config/) 
 with descriptions and details.
 
 ## Project
@@ -45,4 +51,4 @@ with descriptions and details.
 * ReadTheDocs - [elasticsearch-kibana-cli.readthedocs.io](https://elasticsearch-kibana-cli.readthedocs.io)
 
 ---
-Copyright &copy; 2021 Nicholas de Jong
+Copyright &copy; 2021-2023 [Nicholas de Jong](https://wwww.nicholasdejong.com)

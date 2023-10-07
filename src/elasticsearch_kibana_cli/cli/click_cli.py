@@ -1,28 +1,26 @@
-
 import os
+
 import click
 
-from elasticsearch_kibana_cli import __title__ as NAME
-from elasticsearch_kibana_cli import __version__ as VERSION
-from elasticsearch_kibana_cli import __env_config_filename__ as ENV_CONFIG_FILENAME
-from elasticsearch_kibana_cli import __search_split_count_default__ as SEARCH_SPLIT_COUNT_DEFAULT
-from elasticsearch_kibana_cli import __summary_top_count_default__ as SUMMARY_TOP_COUNT_DEFAULT
+from .. import constants
+from ..lib.logger import Logger
+from ..lib.output import output_handler
+from ..main import ElasticsearchKibanaInterface
 
-from elasticsearch_kibana_cli.utils.logger import Logger
-from elasticsearch_kibana_cli.utils.output import output_handler
-from elasticsearch_kibana_cli.ElasticsearchKibanaInterface import ElasticsearchKibanaInterface
-
-
-config_file_default = '~/.eskbcli'
 elasticsearch_kibana_interface = None
 
 
 @click.group()
-@click.option('-c', '--config', help='Config file location; overrides {} environment var and the default {} value.'
-              .format(ENV_CONFIG_FILENAME, config_file_default))
-@click.option('-v', '--verbose', is_flag=True, help='Verbose logging messages (debug level).')
-@click.option('-q', '--quiet', is_flag=True, help='Quiet mode, takes priority over --verbose')
-@click.version_option(VERSION)
+@click.option(
+    "-c",
+    "--config",
+    help="Config file location; overrides {} environment var and the default {} value.".format(
+        constants.CONFIG_FILENAME_ENV, constants.CONFIG_FILE_DEFAULT
+    ),
+)
+@click.option("-v", "--verbose", is_flag=True, help="Verbose logging messages (debug level).")
+@click.option("-q", "--quiet", is_flag=True, help="Quiet mode, takes priority over --verbose")
+@click.version_option(constants.VERSION)
 def eskbcli_interface(config, verbose, quiet):
     """
     ElasticSearch Kibana CLI (`eskbcli`) provides a shell interface to query
@@ -44,115 +42,133 @@ def eskbcli_interface(config, verbose, quiet):
     """
 
     if quiet:
-        Logger(name=NAME).setup(level='CRITICAL')
+        Logger(name=constants.TITLE).setup(level="CRITICAL")
     elif verbose:
-        Logger(name=NAME).setup(level='DEBUG')
+        Logger(name=constants.TITLE).setup(level="DEBUG")
     else:
-        Logger(name=NAME).setup(level='INFO')
+        Logger(name=constants.TITLE).setup(level="INFO")
 
     if config is not None:
         config_filename = config
     else:
-        if os.getenv(ENV_CONFIG_FILENAME):
-            config_filename = os.getenv(ENV_CONFIG_FILENAME)
+        if os.getenv(constants.CONFIG_FILENAME_ENV):
+            config_filename = os.getenv(constants.CONFIG_FILENAME_ENV)
         else:
-            config_filename = config_file_default
+            config_filename = constants.CONFIG_FILE_DEFAULT
 
     global elasticsearch_kibana_interface
     elasticsearch_kibana_interface = ElasticsearchKibanaInterface(config_filename=config_filename)
 
 
-@eskbcli_interface.command('search')
-@click.option('-o', '--out',
-              help='Filename to write output.',
-              required=False, default='stdout', show_default=True)
-@click.option('-S', '--summary',
-              help='Generate summary report and output to stderr with the default summary-top count.',
-              is_flag=True, required=False, default=False, show_default=True)
-@click.option('-ST', '--summary-top',
-              help='Depth of the top-count summary to produce.  [default: {}]'.format(SUMMARY_TOP_COUNT_DEFAULT),
-              required=False, type=int, default=None, show_default=False)
-@click.option('-s', '--splits',
-              help='Number of splits to break search into.  [default: {}]'.format(SEARCH_SPLIT_COUNT_DEFAULT),
-              required=False, type=int, default=None, show_default=False)  # NB: manually express default value
-@click.option('-np', '--no-ping',
-              help='Do not ping the Kibana endpoint before using the connection.',
-              is_flag=True, required=False, default=False, show_default=True)
-@click.argument('search_name', required=False)
+@eskbcli_interface.command("search")
+@click.option("-o", "--out", help="Filename to write output.", required=False, default="stdout", show_default=True)
+@click.option(
+    "-S",
+    "--summary",
+    help="Generate summary report and output to stderr with the default summary-top count.",
+    is_flag=True,
+    required=False,
+    default=False,
+    show_default=True,
+)
+@click.option(
+    "-ST",
+    "--summary-top",
+    help="Depth of the top-count summary to produce.  [default: {}]".format(constants.SUMMARY_TOP_COUNT_DEFAULT),
+    required=False,
+    type=int,
+    default=None,
+    show_default=False,
+)
+@click.option(
+    "-s",
+    "--splits",
+    help="Number of splits to break search into.  [default: {}]".format(constants.SEARCH_SPLIT_COUNT_DEFAULT),
+    required=False,
+    type=int,
+    default=None,
+    show_default=False,
+)  # NB: manually express default value
+@click.option(
+    "-np",
+    "--no-ping",
+    help="Do not ping the Kibana endpoint before using the connection.",
+    is_flag=True,
+    required=False,
+    default=False,
+    show_default=True,
+)
+@click.argument("search_name", required=False)
 def perform_search(**kwargs):
     """
     Execute the named search configuration.
     """
-    data = elasticsearch_kibana_interface.perform_search(
-        name=kwargs['search_name'],
-        split_count=kwargs['splits'],
-        ping_connection=False if kwargs['no_ping'] is True else True
+    data = perform_search(
+        name=kwargs["search_name"],
+        split_count=kwargs["splits"],
+        ping_connection=False if kwargs["no_ping"] is True else True,
     )
 
-    output_handler(
-        data=data,
-        filename=kwargs['out'],
-        compact=False if kwargs['out'] == 'stdout' else True
-    )
+    output_handler(data=data, filename=kwargs["out"], compact=False if kwargs["out"] == "stdout" else True)
 
-    if ('summary' in kwargs.keys() and kwargs['summary'] is True) or \
-            ('summary_top' in kwargs.keys() and kwargs['summary_top'] is not None):
+    if ("summary" in kwargs.keys() and kwargs["summary"] is True) or (
+        "summary_top" in kwargs.keys() and kwargs["summary_top"] is not None
+    ):
         output_handler(
-            data=elasticsearch_kibana_interface.generate_summary(data=data, top_count=kwargs['summary_top']),
-            filename='stderr',
-            compact=False
+            data=generate_summary(data=data, top_count=kwargs["summary_top"]),
+            filename="stderr",
+            compact=False,
         )
 
 
-@eskbcli_interface.command('summary')
-@click.option('-t', '--top',
-              help='Depth of the top-count summary to produce.',
-              required=False, default=SUMMARY_TOP_COUNT_DEFAULT, show_default=True)
-@click.option('-o', '--out',
-              help='Filename to write output.',
-              required=False, default='stdout', show_default=True)
-@click.argument('filename', required=True)
+@eskbcli_interface.command("summary")
+@click.option(
+    "-t",
+    "--top",
+    help="Depth of the top-count summary to produce.",
+    required=False,
+    default=constants.SUMMARY_TOP_COUNT_DEFAULT,
+    show_default=True,
+)
+@click.option("-o", "--out", help="Filename to write output.", required=False, default="stdout", show_default=True)
+@click.argument("filename", required=True)
 def generate_summary(**kwargs):
     """
     Summary report for search result datafile; use "-" to pipe stdin.
     """
     output_handler(
-        data=elasticsearch_kibana_interface.generate_summary(
-            filename=kwargs['filename'],
-            top_count=kwargs['top'],
+        data=generate_summary(
+            filename=kwargs["filename"],
+            top_count=kwargs["top"],
         ),
-        filename=kwargs['out'],
-        compact=False if kwargs['out'] == 'stdout' else True
+        filename=kwargs["out"],
+        compact=False if kwargs["out"] == "stdout" else True,
     )
 
 
-@eskbcli_interface.command('show')
-@click.option('-o', '--out',
-              help='Filename to write output.',
-              required=False, default='stdout', show_default=True)
-@click.argument('search_name', required=False)
+@eskbcli_interface.command("show")
+@click.option("-o", "--out", help="Filename to write output.", required=False, default="stdout", show_default=True)
+@click.argument("search_name", required=False)
 def show_search(**kwargs):
     """
     Show the named eskbcli search configuration.
     """
     output_handler(
-        data=elasticsearch_kibana_interface.show_search(name=kwargs['search_name']),
-        filename=kwargs['out'],
-        compact=False if kwargs['out'] == 'stdout' else True,
-        replacements=[('___timestamp', '@timestamp')]
+        data=show_search(name=kwargs["search_name"]),
+        filename=kwargs["out"],
+        compact=False if kwargs["out"] == "stdout" else True,
+        replacements=[("___timestamp", "@timestamp")],
     )
 
 
-@eskbcli_interface.command('list')
-@click.option('-o', '--out',
-              help='Filename to write output.',
-              required=False, default='stdout', show_default=True)
+@eskbcli_interface.command("list")
+@click.option("-o", "--out", help="Filename to write output.", required=False, default="stdout", show_default=True)
 def list_searches(**kwargs):
     """
     List the available eskbcli search names.
     """
     output_handler(
-        data=elasticsearch_kibana_interface.list_searches(),
-        filename=kwargs['out'],
-        compact=False if kwargs['out'] == 'stdout' else True,
+        data=list_searches(),
+        filename=kwargs["out"],
+        compact=False if kwargs["out"] == "stdout" else True,
     )

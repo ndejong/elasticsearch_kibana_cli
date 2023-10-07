@@ -1,0 +1,7 @@
+release-date = "2021-06-30"
+
+[[entries]]
+id = "5aa19175-e831-4cb6-bd6c-c4bcee3813f3"
+type = "fix"
+description = "Improved logging message"
+author = "@ndejong"

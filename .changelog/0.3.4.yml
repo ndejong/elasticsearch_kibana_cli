@@ -1,6 +1,0 @@
-release_date: '2021-05-21'
-changes:
-- type: fix
-  component: general
-  description: Migrate from Travis to Github actions and implement flake8
-  fixes: []

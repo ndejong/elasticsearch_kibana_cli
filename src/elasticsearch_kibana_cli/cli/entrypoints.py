@@ -1,14 +1,12 @@
+from signal import SIGINT, signal
 
-from signal import signal, SIGINT
-
-from elasticsearch_kibana_cli import __cli_name__ as CLI_NAME
-from elasticsearch_kibana_cli import __version__ as VERSION
-from elasticsearch_kibana_cli.cli import click_cli
-from elasticsearch_kibana_cli.exceptions.ElasticsearchKibanaCLIException import ElasticsearchKibanaCLIException
+from ..cli import click_cli
+from ..constants import CLI_NAME as CLI_NAME, VERSION as VERSION
+from ..exceptions import ElasticsearchKibanaCLIException
 
 
 def sigint_handler(signal_received, frame):
-    print('SIGINT received, exiting.')
+    print("SIGINT received, exiting.")
     exit(1)
 
 
@@ -18,10 +16,10 @@ def eskbcli():
     try:
         click_cli.eskbcli_interface()
     except ElasticsearchKibanaCLIException as e:
-        print('')
-        print('{} v{}'.format(CLI_NAME, VERSION))
-        print('ERROR: ', end='')
+        print("")
+        print("{} v{}".format(CLI_NAME, VERSION))
+        print("ERROR: ", end="")
         for err in iter(e.args):
             print(err)
-        print('')
+        print("")
         exit(9)

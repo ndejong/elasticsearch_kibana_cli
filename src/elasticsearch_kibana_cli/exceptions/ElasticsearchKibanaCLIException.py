@@ -1,3 +1,0 @@
-
-class ElasticsearchKibanaCLIException(Exception):
-    pass

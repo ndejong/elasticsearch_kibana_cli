@@ -1,0 +1,7 @@
+release-date = "2021-04-03"
+
+[[entries]]
+id = "7394cac5-0b17-4e28-83f7-f180dfe8178e"
+type = "feature"
+description = "Migrate to click-cli based structure, input arg changes"
+author = "@ndejong"

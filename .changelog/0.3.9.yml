@@ -1,7 +1,0 @@
-changes:
-- type: fix
-  component: general
-  description: 'Fixes problem in referencing ~/.eskbcli; and issue with including
-    @timestamp as a source: item'
-  fixes: []
-release_date: '2021-09-10'

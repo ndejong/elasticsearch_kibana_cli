@@ -1,6 +1,0 @@
-release_date: '2021-06-05'
-changes:
-- type: fix
-  component: general
-  description: Include click requirement version >=7.1 in package spec
-  fixes: []

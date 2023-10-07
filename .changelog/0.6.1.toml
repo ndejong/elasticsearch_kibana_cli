@@ -1,0 +1,7 @@
+release-date = "2021-10-13"
+
+[[entries]]
+id = "2a5a5772-c4fe-42d4-b168-7192d0a770a6"
+type = "fix"
+description = "Fixes bug when creating a summary report with keys that are lists"
+author = "@ndejong"

@@ -1,6 +1,0 @@
-release_date: '2021-06-04'
-changes:
-- type: fix
-  component: general
-  description: Handle non success response status_code values
-  fixes: []

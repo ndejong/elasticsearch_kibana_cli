@@ -1,0 +1,7 @@
+release-date = "2021-03-11"
+
+[[entries]]
+id = "7bb4959a-0454-4e34-bae9-9af31a58349c"
+type = "fix"
+description = "Migrate to shut tooling for package management"
+author = "@ndejong"

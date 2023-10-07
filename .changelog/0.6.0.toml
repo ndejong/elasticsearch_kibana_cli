@@ -1,0 +1,7 @@
+release-date = "2021-10-01"
+
+[[entries]]
+id = "f88b5089-2073-4a2a-a372-2c4399866501"
+type = "feature"
+description = "Allows search/show actions to be usable without naming the search definition when there is only one serach defined in the configuration file"
+author = "@ndejong"

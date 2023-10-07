@@ -1,6 +1,0 @@
-release_date: '2021-05-19'
-changes:
-- type: fix
-  component: general
-  description: Fixes to support earlier Kibana versions, tested to 6.3.x
-  fixes: []
